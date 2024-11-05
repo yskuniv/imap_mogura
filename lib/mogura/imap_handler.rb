@@ -38,6 +38,10 @@ module Mogura
       Mail.read_from_string(fetch_data)
     end
 
+    def touch_mailbox(mailbox)
+      @imap.create(mailbox) if @imap.list("", mailbox).empty?
+    end
+
     def move(src_mailbox, src_message_id, dst_mailbox)
       @imap.select(src_mailbox)
       @imap.copy(src_message_id, dst_mailbox)
