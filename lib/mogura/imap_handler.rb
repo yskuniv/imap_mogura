@@ -15,9 +15,7 @@ module Mogura
       @imap.examine(mailbox)
 
       loop do
-        @imap.idle do |resp|
-          @imap.idle_done if resp.is_a?(Net::IMAP::UntaggedResponse) && resp.name == "RECENT"
-        end
+        wait_event_with_idle("RECENT")
 
         @imap.search(["RECENT"]).each do |message_id|
           break unless block
