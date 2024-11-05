@@ -30,5 +30,11 @@ module Mogura
       @imap.examine(mailbox)
       @imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
     end
+
+    def move(src_mailbox, src_message_id, dst_mailbox)
+      @imap.select(src_mailbox)
+      @imap.copy(src_message_id, dst_mailbox)
+      @imap.store(src_message_id, "+FLAGS", [:Deleted])
+    end
   end
 end
