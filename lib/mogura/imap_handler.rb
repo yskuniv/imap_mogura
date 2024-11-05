@@ -47,7 +47,9 @@ module Mogura
       @imap.create(mailbox) if @imap.list("", mailbox).empty?
     end
 
-    def move(src_mailbox, src_message_id, dst_mailbox)
+    def move(src_mailbox, src_message_id, dst_mailbox, create_mailbox: false)
+      touch_mailbox(dst_mailbox) if create_mailbox
+
       @imap.select(src_mailbox)
       @imap.copy(src_message_id, dst_mailbox)
       @imap.store(src_message_id, "+FLAGS", [:Deleted])
