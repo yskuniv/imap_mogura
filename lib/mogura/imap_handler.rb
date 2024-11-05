@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "mail"
 require "net/imap"
 
 module Mogura
@@ -29,6 +30,12 @@ module Mogura
     def fetch_envelope(mailbox, message_id)
       @imap.examine(mailbox)
       @imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
+    end
+
+    def fetch_header(mailbox, message_id)
+      @imap.examine(mailbox)
+      fetch_data = @imap.fetch(message_id, "BODY.PEEK[HEADER]")[0].attr["BODY[HEADER]"]
+      Mail.read_from_string(fetch_data)
     end
 
     def move(src_mailbox, src_message_id, dst_mailbox)
