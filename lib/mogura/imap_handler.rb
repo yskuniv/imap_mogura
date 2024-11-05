@@ -27,6 +27,13 @@ module Mogura
       end
     end
 
+    def wait_event_with_idle(expected_response_name, mailbox = nil)
+      @imap.examine(mailbox) if mailbox
+      @imap.idle do |resp|
+        @imap.idle_done if resp.name == expected_response_name
+      end
+    end
+
     def fetch_envelope(mailbox, message_id)
       @imap.examine(mailbox)
       @imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
