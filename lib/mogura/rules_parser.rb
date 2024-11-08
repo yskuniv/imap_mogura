@@ -12,7 +12,7 @@ module Mogura
       def parse(yaml)
         rules = YAML.safe_load(yaml)
 
-        raise ParseError, "top level is required to be an array" unless rules.is_a?(Array)
+        raise ParseError, "top level is required to be juts only one array" unless rules.is_a?(Array)
 
         rules.map do |item|
           rule_set = RuleSet.new(item)
