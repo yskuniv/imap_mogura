@@ -16,11 +16,14 @@ module Mogura
     option :target_mailbox, type: :string, aliases: :b, required: true
     def start(host)
       port = options[:port]
-      auth_type = options[:auth_type]
+      starttls = options[:starttls]
+      auth_type = options[:auth_type] if options[:use_ssl]
       user = options[:user]
       password = Base64.decode64(options[:password_base64])
       config = options[:config]
       target_mailbox = options[:target_mailbox]
+
+      raise NotImplementedError, "STARTTLS currently not supported" if starttls
 
       warn "* parsing rules..."
 
