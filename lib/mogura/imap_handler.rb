@@ -5,9 +5,12 @@ require "net/imap"
 
 module Mogura
   class IMAPHandler
+    # TODO: support starttls
     def initialize(host, port = 143, usessl: false, certs: nil, verify: true,
                    auth_info: nil)
       @imap = Net::IMAP.new(host, port, usessl, certs, verify)
+
+      # TODO: care about LOGIN, not just AUTHENTICATE
       @imap.authenticate(auth_info[:auth_type], auth_info[:user], auth_info[:password]) if auth_info
 
       @selected_mailbox = [nil, nil]
