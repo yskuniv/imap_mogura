@@ -8,6 +8,9 @@ Metrics:
 Style/Documentation:
   Enabled: false
 
+Style/OptionalBooleanParameter:
+  Enabled: false
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
