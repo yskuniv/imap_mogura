@@ -2,7 +2,7 @@
 
 module Mogura
   RuleSet = Struct.new(:destination, :raw_rule, :parsed_rule) do
-    HASH_KEYS = %w[destination rule].freeze
+    HASH_KEYS = %w[destination rule].freeze # rubocop:disable Lint/ConstantDefinitionInBlock
 
     def initialize(hash)
       validate_hash(hash)
