@@ -17,7 +17,7 @@ module Mogura
       select_mailbox(mailbox)
 
       loop do
-        wait_event_with_idle("RECENT")
+        wait_event_with_idle(mailbox, "RECENT")
 
         @imap.search(["RECENT"]).each do |message_id|
           break unless block
