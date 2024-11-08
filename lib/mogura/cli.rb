@@ -7,6 +7,8 @@ module Mogura
   class CLI < Thor
     desc "start HOST", "connect to HOST and start watching"
     option :port, type: :numeric, default: 143, aliases: :p
+    option :starttls, type: :boolean, default: true
+    option :use_ssl, type: :boolean, default: false
     option :auth_type, type: :string, default: "LOGIN"
     option :user, type: :string, aliases: :u
     option :password_base64, type: :string
