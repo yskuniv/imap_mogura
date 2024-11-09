@@ -17,8 +17,6 @@ module Mogura
     end
 
     def monitor_recents(mailbox, &block)
-      select_mailbox(mailbox)
-
       loop do
         wait_event_with_idle(mailbox, "RECENT")
 
