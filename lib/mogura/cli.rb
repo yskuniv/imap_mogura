@@ -31,7 +31,7 @@ module Mogura
 
       warn "* connecting the server..."
 
-      imap_handler = IMAPHandler.new(host, port, usessl: true, certs: nil, verify: false,
+      imap_handler = IMAPHandler.new(host, port, usessl: true, certs: nil, verify: true,
                                                  auth_info: { auth_type: auth_type, user: user, password: password })
 
       warn "* start monitoring recent mails in \"#{target_mailbox}\""
