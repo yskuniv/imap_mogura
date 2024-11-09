@@ -61,6 +61,8 @@ module Mogura
         warn "moving mail #{mail} to #{dst_mailbox}..."
 
         imap_handler.move(mailbox, message_id, dst_mailbox)
+
+        warn "moving done"
       end
     end
   end
