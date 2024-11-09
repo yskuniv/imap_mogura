@@ -52,15 +52,15 @@ module Mogura
       mail = imap_handler.fetch_header(mailbox, message_id)
 
       rules.each do |rule_set|
-        dest_mailbox = rule_set.destination
+        dst_mailbox = rule_set.destination
         rule = rule_set.rule
 
         next unless RuleMatcher.match?(rule, mail)
 
         warn "mail #{mail} matches the rule: #{rule}"
-        warn "moving mail #{mail} to #{dest_mailbox}..."
+        warn "moving mail #{mail} to #{dst_mailbox}..."
 
-        imap_handler.move(mailbox, message_id, dest_mailbox)
+        imap_handler.move(mailbox, message_id, dst_mailbox)
       end
     end
   end
