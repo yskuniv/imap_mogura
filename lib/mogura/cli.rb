@@ -24,7 +24,7 @@ module Mogura
       config = options[:config]
       target_mailbox = options[:target_mailbox]
 
-      raise NotImplementedError, "STARTTLS currently not supported" if starttls
+      raise NotImplementedError, "STARTTLS currently not supported" if !use_ssl && starttls
 
       warn "* parsing rules..."
 
