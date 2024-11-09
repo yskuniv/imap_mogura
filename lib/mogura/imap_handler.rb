@@ -18,7 +18,7 @@ module Mogura
 
     def monitor_recents(mailbox, &block)
       loop do
-        wait_event_with_idle(mailbox, "RECENT")
+        wait_event_with_idle(mailbox, ["RECENT"])
 
         @imap.search(["RECENT"]).each do |message_id|
           break unless block
