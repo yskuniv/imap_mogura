@@ -28,11 +28,11 @@ module Mogura
       end
     end
 
-    def wait_event_with_idle(mailbox, expected_response_name)
+    def wait_event_with_idle(mailbox, expected_response_names)
       select_mailbox(mailbox)
 
       @imap.idle do |resp|
-        @imap.idle_done if resp.name == expected_response_name
+        @imap.idle_done if expected_response_names.include? resp.name
       end
     end
 
