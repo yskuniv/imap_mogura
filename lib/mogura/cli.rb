@@ -39,19 +39,27 @@ module Mogura
       imap_handler.monitor_recents(target_mailbox) do |message_id|
         puts "mail (id = #{message_id} on #{target_mailbox}) is recent"
 
-        mail = imap_handler.fetch_header(target_mailbox, message_id)
+        filter_mail(target_mailbox, message_id)
+      end
+    end
 
-        rules.each do |rule_set|
-          dest_mailbox = rule_set.destination
-          rule = rule_set.rule
+    private
 
-          next unless RuleMatcher.match?(rule, mail)
+    def filter_mail(mailbox, message_id)
+      puts "filtering mail (id = #{message_id} on #{mailbox})..."
 
-          puts "mail \"#{mail}\" matches the rule: #{rule}"
-          puts "moving mail \"#{mail}\" to #{dest_mailbox}"
+      mail = imap_handler.fetch_header(mailbox, message_id)
 
-          imap_handler.move(target_mailbox, message_id, dest_mailbox)
-        end
+      rules.each do |rule_set|
+        dest_mailbox = rule_set.destination
+        rule = rule_set.rule
+
+        next unless RuleMatcher.match?(rule, mail)
+
+        puts "mail \"#{mail}\" matches the rule: #{rule}"
+        puts "moving mail \"#{mail}\" to #{dest_mailbox}"
+
+        imap_handler.move(mailbox, message_id, dest_mailbox)
       end
     end
   end
