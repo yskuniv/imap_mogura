@@ -17,7 +17,8 @@ module Mogura
     def start(host)
       port = options[:port]
       starttls = options[:starttls]
-      auth_type = options[:auth_type] if options[:use_ssl]
+      use_ssl = options[:use_ssl]
+      auth_type = options[:auth_type] if use_ssl
       user = options[:user]
       password = Base64.decode64(options[:password_base64])
       config = options[:config]
