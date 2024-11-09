@@ -57,8 +57,8 @@ module Mogura
 
         next unless RuleMatcher.match?(rule, mail)
 
-        warn "mail \"#{mail}\" matches the rule: #{rule}"
-        warn "moving mail \"#{mail}\" to #{dest_mailbox}..."
+        warn "mail #{mail} matches the rule: #{rule}"
+        warn "moving mail #{mail} to #{dest_mailbox}..."
 
         imap_handler.move(mailbox, message_id, dest_mailbox)
       end
