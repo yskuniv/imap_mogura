@@ -24,15 +24,13 @@ module Mogura
       config = options[:config]
       target_mailbox = options[:target_mailbox]
 
-      raise NotImplementedError, "STARTTLS currently not supported" if !use_ssl && starttls
-
       warn "* parsing rules..."
 
       rules = RulesParser.parse(File.read(config))
 
       warn "* connecting the server..."
 
-      @imap_handler = IMAPHandler.new(host, port, usessl: true, certs: nil, verify: true,
+      @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
                                                   auth_info: { auth_type: auth_type, user: user, password: password })
 
       warn "* start monitoring recent mails in \"#{target_mailbox}\""
