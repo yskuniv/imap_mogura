@@ -36,7 +36,7 @@ module Mogura
       warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
       @imap_handler.monitor_recents(target_mailbox) do |message_id|
-        warn "mail (id = #{message_id} on #{target_mailbox}) is recent"
+        warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
 
         filter_mail(target_mailbox, message_id, rules)
       end
@@ -45,7 +45,7 @@ module Mogura
     private
 
     def filter_mail(mailbox, message_id, rules)
-      warn "filtering mail (id = #{message_id} on #{mailbox})..."
+      warn "filtering mail (id = #{message_id} on \"#{mailbox}\")..."
 
       mail = @imap_handler.fetch_header(mailbox, message_id)
 
@@ -56,7 +56,7 @@ module Mogura
         next unless RuleMatcher.match?(rule, mail)
 
         warn "mail #{mail} matches the rule: #{rule}"
-        warn "moving mail #{mail} to #{dst_mailbox}..."
+        warn "moving mail #{mail} to \"#{dst_mailbox}\"..."
 
         @imap_handler.move(mailbox, message_id, dst_mailbox)
 
