@@ -35,7 +35,7 @@ module Mogura
       def parse_rule(rule)
         unless rule.is_a?(Hash) && rule.keys.count == 1
           raise ParseError,
-                "rule should be a hash having only one key: illegal rule: #{JSON.dump(rule)}"
+                "rule should be a hash having only one key, illegal rule: #{JSON.dump(rule)}"
         end
 
         k = rule.keys.first
