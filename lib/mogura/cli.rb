@@ -14,6 +14,7 @@ module Mogura
     option :password_base64, type: :string
     option :config, type: :string, aliases: :c, required: true
     option :target_mailbox, type: :string, aliases: :b, required: true
+    option :dry_run, type: :boolean, default: false
     def start(host)
       port = options[:port]
       starttls = options[:starttls]
@@ -23,6 +24,8 @@ module Mogura
       password = Base64.decode64(options[:password_base64])
       config = options[:config]
       target_mailbox = options[:target_mailbox]
+
+      @dry_run = options[:dry_run]
 
       warn "* parsing rules..."
 
@@ -58,7 +61,7 @@ module Mogura
         warn "mail #{mail} matches the rule: #{rule}"
         warn "moving mail #{mail} to \"#{dst_mailbox}\"..."
 
-        @imap_handler.move(mailbox, message_id, dst_mailbox)
+        @imap_handler.move(mailbox, message_id, dst_mailbox) unless @dry_run
 
         warn "moving done"
       end
