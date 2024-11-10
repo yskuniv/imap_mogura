@@ -11,7 +11,7 @@ module Mogura
       @imap = Net::IMAP.new(host, port, usessl, certs, verify)
 
       if usessl || starttls
-        @imap.starttls(certs, verify) if starttls
+        @imap.starttls(certs, verify) if !usessl && starttls
 
         # in case with TLS, just authenticate with LOGIN command
         @imap.login(auth_info[:user], auth_info[:password])
