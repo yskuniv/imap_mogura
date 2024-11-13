@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require "English"
 require "json"
 require "yaml"
 
 require_relative "rules_parser/errors"
 require_relative "rules_parser/rule_set"
+require_relative "rules_parser/rule_elements"
 
 module Mogura
   module RulesParser
@@ -17,9 +19,7 @@ module Mogura
         rules.map do |item|
           rule_set = RuleSet.new(item)
 
-          @parsed_rule = []
-          parse_rule(rule_set.raw_rule)
-          rule_set.parsed_rule = @parsed_rule
+          rule_set.parsed_rule = parse_rule(rule_set.raw_rule)
 
           rule_set
         rescue ArgumentError
@@ -44,24 +44,33 @@ module Mogura
         when /^[Aa]nd$/
           rule_list = rule[k]
 
-          @parsed_rule << { cond_operator: :AND, operands: rule_list.length }
-          parse_rule_list(rule_list)
+          AndOperator.new(parse_rule_list(rule_list))
         when /^[Oo]r$/
           rule_list = rule[k]
 
-          @parsed_rule << { cond_operator: :OR, operands: rule_list.length }
-          parse_rule_list(rule_list)
-        when /^([Ff]rom|[Ss]ender|[Tt]o|[Cc]c|[Ss]ubject|[Dd]ate)$/
-          @parsed_rule << { special_field: k, regexp: rule[k] }
+          OrOperator.new(parse_rule_list(rule_list))
+        when /^(?<special_field_name>[Ff]rom|[Ss]ender|[Tt]o|[Cc]c|[Ss]ubject|[Dd]ate)$/
+          case $LAST_MATCH_INFO[:special_field_name]
+          when /^[Ff]rom$/
+            FromMatcher
+          when /^[Ss]ender$/
+            SenderMatcher
+          when /^[Tt]o$/
+            ToMatcher
+          when /^[Cc]c$/
+            CcMatcher
+          when /^[Ss]ubject$/
+            SubjectMatcher
+          when /^[Dd]ate$/
+            DateMatcher
+          end.new(rule[k])
         else
-          @parsed_rule << { field_name: k, regexp: rule[k] }
+          GeneralFieldMatcher.new(k, rule[k])
         end
       end
 
       def parse_rule_list(rule_list)
-        rule_list.each do |rule|
-          parse_rule(rule)
-        end
+        rule_list.map { |rule| parse_rule(rule) }
       end
     end
   end
