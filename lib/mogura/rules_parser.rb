@@ -51,7 +51,7 @@ module Mogura
 
           @parsed_rule << { cond_operator: :OR, operands: rule_list.length }
           parse_rule_list(rule_list)
-        when /^([Ff]rom|[Ss]ender|[Tt]o|[Cc]c|[Ss]ubject)$/
+        when /^([Ff]rom|[Ss]ender|[Tt]o|[Cc]c|[Ss]ubject)|[Dd]ate$/
           @parsed_rule << { special_field: k, regexp: rule[k] }
         else
           @parsed_rule << { field_name: k, regexp: rule[k] }
