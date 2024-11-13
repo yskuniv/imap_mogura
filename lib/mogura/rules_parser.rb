@@ -43,12 +43,14 @@ module Mogura
         case k
         when /^[Aa]nd$/
           rule_list = rule[k]
-          parse_rule_list(rule_list)
+
           @parsed_rule << { cond_operator: :AND, operands: rule_list.length }
+          parse_rule_list(rule_list)
         when /^[Oo]r$/
           rule_list = rule[k]
-          parse_rule_list(rule_list)
+
           @parsed_rule << { cond_operator: :OR, operands: rule_list.length }
+          parse_rule_list(rule_list)
         when /^([Ff]rom|[Tt]o|[Ss]ubject)$/
           @parsed_rule << { special_field: k, regexp: rule[k] }
         else
