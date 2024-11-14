@@ -39,7 +39,7 @@ Write `rules.yml` as following.
 Then, run the command as following.
 
 ```console
-$ mogura start mail.example.com -u <user> --password-base64=<password base64-encoded> -c rules.yml -b INBOX
+$ mogura start mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
 ```
 
 ## Development
