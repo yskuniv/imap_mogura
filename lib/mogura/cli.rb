@@ -152,11 +152,7 @@ module Mogura
     end
 
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
-      warn "filtering mail (id = #{message_id} on \"#{mailbox}\")..."
-
       mail = imap_handler.fetch_header(mailbox, message_id)
-
-      warn "start checking mail (id = #{message_id} on \"#{mailbox}\" with subject \"#{mail.subject}\") matches the rule..."
 
       rules.each do |rule_set|
         dst_mailbox = rule_set.destination
@@ -164,19 +160,14 @@ module Mogura
 
         next unless rule.match?(mail)
 
-        warn "the mail matches for the destination \"#{dst_mailbox}\""
+        warn "the mail of subject \"#{mail.subject}\" matches for the rule of the destination \"#{dst_mailbox}\""
         warn "moving the mail..."
 
         if dry_run
           warn "moving skipped because this is dry run"
         else
           result = imap_handler.move(mailbox, message_id, dst_mailbox, create_mailbox: true)
-
-          if result.nil?
-            warn "moving skipped because src and dst is the same mailbox"
-          else
-            warn "moving done"
-          end
+          warn "moving done" if result
         end
       end
 
