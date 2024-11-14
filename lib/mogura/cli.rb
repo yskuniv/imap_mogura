@@ -99,9 +99,13 @@ module Mogura
         warn "mail (id = #{message_id} on \"#{mailbox}\" with subject \"#{mail.subject}\") matches the rule"
         warn "moving mail (id = #{message_id} on \"#{mailbox}\") to \"#{dst_mailbox}\"..."
 
-        @imap_handler.move(mailbox, message_id, dst_mailbox) unless @dry_run
+        if @dry_run
+          warn "moving skipped because of dry run"
+        else
+          @imap_handler.move(mailbox, message_id, dst_mailbox)
 
-        warn "moving done"
+          warn "moving done"
+        end
       end
     end
   end
