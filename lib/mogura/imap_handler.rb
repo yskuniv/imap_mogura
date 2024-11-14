@@ -43,6 +43,15 @@ module Mogura
       end
     end
 
+    def handle_all_mails(mailbox, &block)
+      select_mailbox(mailbox)
+      @imap.search(["ALL"]).each do |message_id|
+        break unless block
+
+        block[message_id]
+      end
+    end
+
     def fetch_envelope(mailbox, message_id)
       select_mailbox(mailbox)
       @imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
