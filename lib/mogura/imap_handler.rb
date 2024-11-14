@@ -23,6 +23,11 @@ module Mogura
       @selected_mailbox = nil
     end
 
+    def close
+      @imap.close if @selected_mailbox
+      @imap.disconnect
+    end
+
     def monitor_recents(mailbox, &block)
       loop do
         wait_event_with_idle(mailbox, ["RECENT"])
