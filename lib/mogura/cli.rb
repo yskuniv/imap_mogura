@@ -53,7 +53,8 @@ module Mogura
     option :user, type: :string, aliases: :u
     option :password_base64, type: :string
     option :config, type: :string, aliases: :c, required: true
-    option :target_mailbox, type: :string, aliases: :b, required: true
+    option :all_mailbox, type: :boolean, default: false, aliases: %i[all a]
+    option :target_mailbox, type: :string, aliases: :b
     option :dry_run, type: :boolean, default: false
     def filter(host)
       port = options[:port]
@@ -63,7 +64,8 @@ module Mogura
       user = options[:user]
       password = Base64.decode64(options[:password_base64])
       config = options[:config]
-      target_mailbox = options[:target_mailbox]
+      all_mailbox = options[:all_mailbox]
+      target_mailbox = options[:target_mailbox] unless all_mailbox
 
       @dry_run = options[:dry_run]
 
@@ -76,8 +78,16 @@ module Mogura
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
                                                   auth_info: { auth_type: auth_type, user: user, password: password })
 
-      @imap_handler.handle_all_mails(target_mailbox) do |message_id|
-        filter_mail(target_mailbox, message_id, rules)
+      if all_mailbox
+        @imap_handler.all_mailbox_list.each do |mailbox|
+          @imap_handler.handle_all_mails(mailbox) do |message_id|
+            filter_mail(mailbox, message_id, rules)
+          end
+        end
+      else
+        @imap_handler.handle_all_mails(target_mailbox) do |message_id|
+          filter_mail(target_mailbox, message_id, rules)
+        end
       end
     end
 
