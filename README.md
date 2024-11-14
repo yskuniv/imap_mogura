@@ -17,7 +17,7 @@ Install this gem and add to the application's Gemfile by executing:
 
 ## Usage
 
-Write `rules.yml` like following.
+Write `rules.yml` as following.
 
 ```yaml
 - destination: test
