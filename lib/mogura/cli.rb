@@ -118,11 +118,15 @@ module Mogura
     private
 
     def touch_all_mailboxes_in_rules(rules)
-      return if @dry_run
-
       rules.each do |rule_set|
         dst_mailbox = rule_set.destination
-        @imap_handler.touch_mailbox(dst_mailbox)
+
+        if @dry_run
+          warn "creation or existence check of mailbox \"#{dst_mailbox}\" is skipped because this is dry run"
+        else
+          result = @imap_handler.touch_mailbox(dst_mailbox)
+          warn "mailbox \"#{dst_mailbox}\" is created" if result
+        end
       end
     end
 
