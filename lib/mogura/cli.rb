@@ -91,6 +91,30 @@ module Mogura
       end
     end
 
+    desc "list HOST", "list mailboxes on HOST"
+    option :port, type: :numeric, default: 143, aliases: :p
+    option :starttls, type: :boolean, default: true
+    option :use_ssl, type: :boolean, default: false
+    option :auth_type, type: :string, default: "LOGIN"
+    option :user, type: :string, aliases: :u
+    option :password_base64, type: :string
+    def list(host)
+      port = options[:port]
+      starttls = options[:starttls]
+      use_ssl = options[:use_ssl]
+      auth_type = options[:auth_type] if use_ssl
+      user = options[:user]
+      password = Base64.decode64(options[:password_base64])
+
+      imap_handler = IMAPHandler.new(host, port,
+                                     starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
+                                     auth_info: { auth_type: auth_type, user: user, password: password })
+
+      puts imap_handler.all_mailbox_list
+
+      imap_handler.close
+    end
+
     private
 
     def with_all_preparation_ready(config,
