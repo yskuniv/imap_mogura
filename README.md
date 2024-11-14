@@ -25,7 +25,7 @@ Create `rules.yml` and write rules like following.
     and:
       - subject: "^\\[TEST "
       - or:
-        - sender: "test@example.com"
+        - sender: "test@example\\.com"
         - x-test: "X-TEST"
         - x-foo: "X-FOO"
 - destination: Trash
@@ -33,7 +33,7 @@ Create `rules.yml` and write rules like following.
     subject: "hi, im trash-like email!!"
 - destination: bar
   rule:
-    from: "bar@bar.example.com"
+    from: "bar@bar\\.example\\.com"
 ```
 
 Then, run the command as following. This will start monitoring recent mails on "INBOX" and filtering them.
