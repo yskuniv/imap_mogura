@@ -36,7 +36,7 @@ Write `rules.yml` as following.
     from: "bar@bar.example.com"
 ```
 
-Then, run the command as following.
+Then, run the command as following. This will start monitor recent mails on "INBOX" and filter them.
 
 ```console
 $ mogura start mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
