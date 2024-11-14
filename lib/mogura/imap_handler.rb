@@ -68,6 +68,8 @@ module Mogura
     end
 
     def move(src_mailbox, src_message_id, dst_mailbox, create_mailbox: false)
+      return if src_mailbox == dst_mailbox # skip moving if src_mailbox is the same with dst_mailbox
+
       touch_mailbox(dst_mailbox) if create_mailbox
 
       select_mailbox(src_mailbox, readonly: false)
