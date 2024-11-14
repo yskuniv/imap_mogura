@@ -89,6 +89,8 @@ module Mogura
     def select_mailbox(mailbox, readonly: true)
       return if @selected_mailbox == [mailbox, readonly]
 
+      @imap.close if @selected_mailbox
+
       if readonly
         @imap.examine(mailbox)
       else
