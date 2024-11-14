@@ -91,6 +91,10 @@ module Mogura
       dst_mailbox
     end
 
+    def close_operation_for_mailbox(_)
+      close_mailbox
+    end
+
     private
 
     def with_mailbox_selected(mailbox, readonly: true, &block)
