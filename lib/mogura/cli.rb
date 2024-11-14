@@ -44,6 +44,11 @@ module Mogura
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
                                                   auth_info: { auth_type: auth_type, user: user, password: password })
 
+      trap("INT") do
+        @imap_handler.close
+        exit
+      end
+
       warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
       @imap_handler.monitor_recents(target_mailbox) do |message_id|
@@ -89,6 +94,11 @@ module Mogura
 
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
                                                   auth_info: { auth_type: auth_type, user: user, password: password })
+
+      trap("INT") do
+        @imap_handler.close
+        exit
+      end
 
       if all_mailbox
         @imap_handler.all_mailbox_list.each do |mailbox|
