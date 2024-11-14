@@ -117,6 +117,27 @@ module Mogura
 
     private
 
+    def with_all_preparation_ready(config, host, port, starttls, use_ssl, certs: nil, verify: true, auth_info: nil, &block)
+      rules = RulesParser.parse(File.read(config))
+
+      warn "* connecting the server \"#{host}:#{port}\"..."
+
+      imap_handler = IMAPHandler.new(host, port,
+                                     starttls: starttls, usessl: use_ssl, certs: certs, verify: verify,
+                                     auth_info: auth_info)
+
+      trap("INT") do
+        imap_handler.close
+        exit
+      end
+
+      touch_all_mailboxes_in_rules(rules)
+
+      block[imap_handler, rules]
+
+      imap_handler.close
+    end
+
     def touch_all_mailboxes_in_rules(rules)
       rules.each do |rule_set|
         dst_mailbox = rule_set.destination
