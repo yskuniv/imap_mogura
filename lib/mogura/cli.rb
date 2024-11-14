@@ -59,7 +59,7 @@ module Mogura
     option :user, type: :string, aliases: :u
     option :password_base64, type: :string
     option :config, type: :string, aliases: :c, required: true
-    option :all_mailbox, type: :boolean, default: false, aliases: %i[all a]
+    option :all_mailbox, type: :boolean, default: false, aliases: :a
     option :target_mailbox, type: :string, aliases: :b
     option :dry_run, type: :boolean, default: false
     def filter(host)
@@ -73,7 +73,7 @@ module Mogura
       all_mailbox = options[:all_mailbox]
       target_mailbox = options[:target_mailbox] unless all_mailbox
 
-      raise CustomOptionError, "--all-mailbox (--all, -a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
+      raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
 
       @dry_run = options[:dry_run]
 
