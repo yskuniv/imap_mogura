@@ -4,6 +4,12 @@ require "thor"
 require "base64"
 
 module Mogura
+  class CustomOptionError < Thor::Error
+    def initialize(msg = "Custom option error message")
+      super
+    end
+  end
+
   class CLI < Thor
     desc "start HOST", "connect to HOST and start watching"
     option :port, type: :numeric, default: 143, aliases: :p
@@ -53,7 +59,8 @@ module Mogura
     option :user, type: :string, aliases: :u
     option :password_base64, type: :string
     option :config, type: :string, aliases: :c, required: true
-    option :target_mailbox, type: :string, aliases: :b, required: true
+    option :all_mailbox, type: :boolean, default: false, aliases: %i[all a]
+    option :target_mailbox, type: :string, aliases: :b
     option :dry_run, type: :boolean, default: false
     def filter(host)
       port = options[:port]
@@ -63,7 +70,10 @@ module Mogura
       user = options[:user]
       password = Base64.decode64(options[:password_base64])
       config = options[:config]
-      target_mailbox = options[:target_mailbox]
+      all_mailbox = options[:all_mailbox]
+      target_mailbox = options[:target_mailbox] unless all_mailbox
+
+      raise CustomOptionError, "--all-mailbox (--all, -a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
 
       @dry_run = options[:dry_run]
 
@@ -76,8 +86,16 @@ module Mogura
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
                                                   auth_info: { auth_type: auth_type, user: user, password: password })
 
-      @imap_handler.handle_all_mails(target_mailbox) do |message_id|
-        filter_mail(target_mailbox, message_id, rules)
+      if all_mailbox
+        @imap_handler.all_mailbox_list.each do |mailbox|
+          @imap_handler.handle_all_mails(mailbox) do |message_id|
+            filter_mail(mailbox, message_id, rules)
+          end
+        end
+      else
+        @imap_handler.handle_all_mails(target_mailbox) do |message_id|
+          filter_mail(target_mailbox, message_id, rules)
+        end
       end
     end
 
@@ -102,9 +120,13 @@ module Mogura
         if @dry_run
           warn "moving skipped because of dry run"
         else
-          @imap_handler.move(mailbox, message_id, dst_mailbox, create_mailbox: true)
+          result = @imap_handler.move(mailbox, message_id, dst_mailbox, create_mailbox: true)
 
-          warn "moving done"
+          if result.nil?
+            warn "moving skipped because src and dst is the same mailbox"
+          else
+            warn "moving done"
+          end
         end
       end
     end

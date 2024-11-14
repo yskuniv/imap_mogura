@@ -43,6 +43,10 @@ module Mogura
       end
     end
 
+    def all_mailbox_list
+      @imap.list("", "*").map(&:name)
+    end
+
     def handle_all_mails(mailbox, &block)
       select_mailbox(mailbox)
       @imap.search(["ALL"]).each do |message_id|
@@ -68,12 +72,16 @@ module Mogura
     end
 
     def move(src_mailbox, src_message_id, dst_mailbox, create_mailbox: false)
+      return if src_mailbox == dst_mailbox # skip moving if src_mailbox is the same with dst_mailbox
+
       touch_mailbox(dst_mailbox) if create_mailbox
 
       select_mailbox(src_mailbox, readonly: false)
 
       @imap.copy([src_message_id], dst_mailbox)
       @imap.store(src_message_id, "+FLAGS", [:Deleted])
+
+      dst_mailbox
     end
 
     private
