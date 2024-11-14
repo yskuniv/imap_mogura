@@ -131,13 +131,15 @@ module Mogura
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
       mail = imap_handler.fetch_header(mailbox, message_id)
 
+      warn "filtering mail of subject \"#{mail.subject}\"..."
+
       rules.each do |rule_set|
         dst_mailbox = rule_set.destination
         rule = rule_set.rule
 
         next unless rule.match?(mail)
 
-        warn "the mail of subject \"#{mail.subject}\" matches for the rule of the destination \"#{dst_mailbox}\""
+        warn "the mail matches for the rule of the destination \"#{dst_mailbox}\""
         warn "moving the mail..."
 
         if dry_run
