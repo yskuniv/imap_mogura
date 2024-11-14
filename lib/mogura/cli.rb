@@ -94,17 +94,15 @@ module Mogura
         dst_mailbox = rule_set.destination
         rule = rule_set.rule
 
-        warn "checking the mail matches for the destination \"#{dst_mailbox}\"..."
-
         next unless rule.match?(mail)
 
         warn "the mail matches for the destination \"#{dst_mailbox}\""
-        warn "moving the mail to \"#{dst_mailbox}\"..."
+        warn "moving the mail..."
 
         if @dry_run
           warn "moving skipped because of dry run"
         else
-          @imap_handler.move(mailbox, message_id, dst_mailbox)
+          @imap_handler.move(mailbox, message_id, dst_mailbox, create_mailbox: true)
 
           warn "moving done"
         end
