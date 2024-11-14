@@ -97,6 +97,10 @@ module Mogura
       block[]
     end
 
+    def initialize_selected_mailbox
+      @selected_mailbox = nil
+    end
+
     def select_mailbox(mailbox, readonly: true)
       return if @selected_mailbox == [mailbox, readonly]
 
