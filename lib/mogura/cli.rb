@@ -34,7 +34,8 @@ module Mogura
       dry_run = options[:dry_run]
 
       with_all_preparation_ready(config, host, port, starttls, use_ssl,
-                                 auth_info: { auth_type: auth_type, user: user, password: password }) do |imap_handler, rules|
+                                 auth_info: { auth_type: auth_type, user: user, password: password },
+                                 dry_run: dry_run) do |imap_handler, rules|
         warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
         imap_handler.monitor_recents(target_mailbox) do |message_id|
@@ -72,7 +73,8 @@ module Mogura
       dry_run = options[:dry_run]
 
       with_all_preparation_ready(config, host, port, starttls, use_ssl,
-                                 auth_info: { auth_type: auth_type, user: user, password: password }) do |imap_handler, rules|
+                                 auth_info: { auth_type: auth_type, user: user, password: password },
+                                 dry_run: dry_run) do |imap_handler, rules|
         warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
         if all_mailbox
