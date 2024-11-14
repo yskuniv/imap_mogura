@@ -97,14 +97,14 @@ module Mogura
 
     private
 
+    def initialize_selected_mailbox
+      @selected_mailbox = nil
+    end
+
     def with_mailbox_selected(mailbox, readonly: true, &block)
       select_mailbox(mailbox, readonly: readonly)
 
       block[]
-    end
-
-    def initialize_selected_mailbox
-      @selected_mailbox = nil
     end
 
     def select_mailbox(mailbox, readonly: true)
