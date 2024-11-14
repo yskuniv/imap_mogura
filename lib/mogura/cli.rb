@@ -92,10 +92,12 @@ module Mogura
         dst_mailbox = rule_set.destination
         rule = rule_set.rule
 
+        warn "checking mail (id = #{message_id} on \"#{mailbox}\" with subject \"#{mail.subject}\") matches the rule for the destination \"#{dst_mailbox}\"..."
+
         next unless rule.match?(mail)
 
-        warn "mail #{mail} matches the rule: #{rule}"
-        warn "moving mail #{mail} to \"#{dst_mailbox}\"..."
+        warn "mail (id = #{message_id} on \"#{mailbox}\" with subject \"#{mail.subject}\") matches the rule"
+        warn "moving mail (id = #{message_id} on \"#{mailbox}\") to \"#{dst_mailbox}\"..."
 
         @imap_handler.move(mailbox, message_id, dst_mailbox) unless @dry_run
 
