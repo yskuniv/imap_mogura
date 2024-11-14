@@ -47,7 +47,7 @@ module Mogura
 
   class FromMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.from&.any? { |address| address.match?(@regexp) }
+      mail.from&.any? { |address| address&.match?(@regexp) }
     end
   end
 
@@ -59,13 +59,13 @@ module Mogura
 
   class ToMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.to&.any? { |address| address.match?(@regexp) }
+      mail.to&.any? { |address| address&.match?(@regexp) }
     end
   end
 
   class CcMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.cc&.any? { |address| address.match?(@regexp) }
+      mail.cc&.any? { |address| address&.match?(@regexp) }
     end
   end
 
