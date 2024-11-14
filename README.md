@@ -10,7 +10,30 @@ Install this gem and add to the application's Gemfile by executing:
 
 ## Usage
 
-TODO: Write usage instructions here
+Write `rules.yml` like following.
+
+```yaml
+- destination: test
+  rule:
+    and:
+      - subject: "^\\[TEST "
+      - or:
+        - sender: "test@example.com"
+        - x-test: "X-TEST"
+        - x-foo: "X-FOO"
+- destination: Trash
+  rule:
+    subject: "trash-like mail"
+- destination: bar
+  rule:
+    from: "bar@bar.example.com"
+```
+
+Then, run like following.
+
+```console
+$ mogura start mail.example.com -u <user> --password-base64=<password base64-encoded> -c rules.yml -b INBOX
+```
 
 ## Development
 
