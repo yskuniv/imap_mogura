@@ -63,14 +63,17 @@ module Mogura
     end
 
     def fetch_envelope(mailbox, message_id)
-      select_mailbox(mailbox)
-      @imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
+      with_mailbox_selected(mailbox) do
+        @imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
+      end
     end
 
     def fetch_header(mailbox, message_id)
-      select_mailbox(mailbox)
-      fetch_data = @imap.fetch(message_id, "BODY.PEEK[HEADER]")[0].attr["BODY[HEADER]"]
-      Mail.read_from_string(fetch_data)
+      with_mailbox_selected(mailbox) do
+        fetch_data = @imap.fetch(message_id, "BODY.PEEK[HEADER]")[0].attr["BODY[HEADER]"]
+
+        Mail.read_from_string(fetch_data)
+      end
     end
 
     def touch_mailbox(mailbox)
@@ -82,10 +85,10 @@ module Mogura
 
       touch_mailbox(dst_mailbox) if create_mailbox
 
-      select_mailbox(src_mailbox, readonly: false)
-
-      @imap.copy([src_message_id], dst_mailbox)
-      @imap.store(src_message_id, "+FLAGS", [:Deleted])
+      with_mailbox_selected(src_mailbox, readonly: false) do
+        @imap.copy([src_message_id], dst_mailbox)
+        @imap.store(src_message_id, "+FLAGS", [:Deleted])
+      end
 
       dst_mailbox
     end
