@@ -4,6 +4,12 @@ require "thor"
 require "base64"
 
 module Mogura
+  class CustomOptionError < Thor::Error
+    def initialize(msg = "Custom option error message")
+      super
+    end
+  end
+
   class CLI < Thor
     desc "start HOST", "connect to HOST and start watching"
     option :port, type: :numeric, default: 143, aliases: :p
@@ -66,6 +72,8 @@ module Mogura
       config = options[:config]
       all_mailbox = options[:all_mailbox]
       target_mailbox = options[:target_mailbox] unless all_mailbox
+
+      raise CustomOptionError, "--all-mailbox (--all, -a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
 
       @dry_run = options[:dry_run]
 
