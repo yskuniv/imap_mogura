@@ -138,14 +138,14 @@ module Mogura
       imap_handler.close
     end
 
-    def touch_all_mailboxes_in_rules(rules)
+    def touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: false)
       rules.each do |rule_set|
         dst_mailbox = rule_set.destination
 
-        if @dry_run
+        if dry_run
           warn "creation or existence check of mailbox \"#{dst_mailbox}\" is skipped because this is dry run"
         else
-          result = @imap_handler.touch_mailbox(dst_mailbox)
+          result = imap_handler.touch_mailbox(dst_mailbox)
           warn "mailbox \"#{dst_mailbox}\" is created" if result
         end
       end
