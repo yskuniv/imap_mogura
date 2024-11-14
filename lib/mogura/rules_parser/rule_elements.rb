@@ -35,7 +35,7 @@ module Mogura
 
   class FieldMatcher < RuleElement
     def initialize(regexp)
-      @regexp = regexp
+      @regexp = /#{regexp}/ # FIXME: need to care about malicious regular expression injection
 
       super()
     end
@@ -47,31 +47,31 @@ module Mogura
 
   class FromMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.from.addresses.any? { |address| address.match?(@regexp) }
+      mail.from&.any? { |address| address.match?(@regexp) }
     end
   end
 
   class SenderMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.sender.address.match?(@regexp)
+      mail.sender&.match?(@regexp)
     end
   end
 
   class ToMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.to.match?(@regexp)
+      mail.to&.any? { |address| address.match?(@regexp) }
     end
   end
 
   class CcMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.cc.match?(@regexp)
+      mail.cc&.any? { |address| address.match?(@regexp) }
     end
   end
 
   class SubjectMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.subject.match?(@regexp)
+      mail.subject&.match?(@regexp)
     end
   end
 
