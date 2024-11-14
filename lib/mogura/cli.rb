@@ -125,7 +125,7 @@ module Mogura
                                    dry_run: false, &block)
       rules = RulesParser.parse(File.read(config))
 
-      warn "* connecting the server \"#{host}:#{port}\"..."
+      warn "* connecting the server #{host}:#{port}..."
 
       imap_handler = IMAPHandler.new(host, port,
                                      starttls: starttls, usessl: use_ssl, certs: certs, verify: verify,
