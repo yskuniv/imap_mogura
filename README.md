@@ -4,6 +4,13 @@ A mail filtering tool for IMAP.
 
 ## Installation
 
+Check out this repo, first and enter the directory.
+
+```console
+$ git clone https://github.com/yskuniv/mogura.git
+$ cd mogura/
+```
+
 Install this gem and add to the application's Gemfile by executing:
 
     $ bundle install
