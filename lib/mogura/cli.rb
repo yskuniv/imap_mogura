@@ -37,6 +37,8 @@ module Mogura
 
       rules = RulesParser.parse(File.read(config))
 
+      touch_all_mailboxes_in_rules(rules)
+
       warn "* connecting the server..."
 
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
@@ -81,6 +83,8 @@ module Mogura
 
       rules = RulesParser.parse(File.read(config))
 
+      touch_all_mailboxes_in_rules(rules)
+
       warn "* connecting the server..."
 
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
@@ -100,6 +104,13 @@ module Mogura
     end
 
     private
+
+    def touch_all_mailboxes_in_rules(rules)
+      rules.each do |rule_set|
+        dst_mailbox = rule_set.destination
+        @imap_handler.touch_mailbox(dst_mailbox)
+      end
+    end
 
     def filter_mail(mailbox, message_id, rules)
       warn "filtering mail (id = #{message_id} on \"#{mailbox}\")..."
