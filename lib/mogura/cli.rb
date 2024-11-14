@@ -151,6 +151,12 @@ module Mogura
       end
     end
 
+    def filter_all_mails(imap_handler, rules, mailbox, dry_run: false)
+      imap_handler.handle_all_mails(mailbox) do |message_id|
+        filter_mail(imap_handler, rules, mailbox, message_id, dry_run: dry_run)
+      end
+    end
+
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
       mail = imap_handler.fetch_header(mailbox, message_id)
 
