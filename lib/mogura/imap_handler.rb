@@ -54,6 +54,7 @@ module Mogura
 
     def handle_all_mails(mailbox, &block)
       select_mailbox(mailbox)
+
       @imap.search(["ALL"]).each do |message_id|
         break unless block
 
