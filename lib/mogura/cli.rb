@@ -112,9 +112,13 @@ module Mogura
         if @dry_run
           warn "moving skipped because of dry run"
         else
-          @imap_handler.move(mailbox, message_id, dst_mailbox, create_mailbox: true)
+          result = @imap_handler.move(mailbox, message_id, dst_mailbox, create_mailbox: true)
 
-          warn "moving done"
+          if result.nil?
+            warn "moving skipped because src and dst is the same mailbox"
+          else
+            warn "moving done"
+          end
         end
       end
     end
