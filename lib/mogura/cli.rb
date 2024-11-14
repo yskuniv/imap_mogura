@@ -87,7 +87,12 @@ module Mogura
 
     private
 
-    def with_all_preparation_ready(config, host, port, starttls, use_ssl, certs: nil, verify: true, auth_info: nil, dry_run: false, &block)
+    def with_all_preparation_ready(config,
+                                   host, port,
+                                   starttls, use_ssl, certs: nil, verify: true,
+                                   auth_info: nil,
+                                   create_directory: true,
+                                   dry_run: false, &block)
       rules = RulesParser.parse(File.read(config))
 
       warn "* connecting the server \"#{host}:#{port}\"..."
@@ -102,7 +107,7 @@ module Mogura
       #   exit
       # end
 
-      touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: dry_run)
+      touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: dry_run) if create_directory
 
       block[imap_handler, rules]
 
