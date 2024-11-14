@@ -37,8 +37,6 @@ module Mogura
 
       rules = RulesParser.parse(File.read(config))
 
-      touch_all_mailboxes_in_rules(rules)
-
       warn "* connecting the server..."
 
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
@@ -48,6 +46,8 @@ module Mogura
         @imap_handler.close
         exit
       end
+
+      touch_all_mailboxes_in_rules(rules)
 
       warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
@@ -88,8 +88,6 @@ module Mogura
 
       rules = RulesParser.parse(File.read(config))
 
-      touch_all_mailboxes_in_rules(rules)
-
       warn "* connecting the server..."
 
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
@@ -99,6 +97,8 @@ module Mogura
         @imap_handler.close
         exit
       end
+
+      touch_all_mailboxes_in_rules(rules)
 
       if all_mailbox
         @imap_handler.all_mailbox_list.each do |mailbox|
