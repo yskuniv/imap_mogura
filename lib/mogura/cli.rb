@@ -139,7 +139,7 @@ module Mogura
 
         next unless rule.match?(mail)
 
-        warn "the mail of subject \"#{mail.subject}\" matches for the rule of the destination \"#{dst_mailbox}\""
+        warn "the mail matches for the rule of the destination \"#{dst_mailbox}\""
         warn "moving the mail..."
 
         if dry_run
