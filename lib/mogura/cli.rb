@@ -151,7 +151,7 @@ module Mogura
       end
     end
 
-    def filter_mail(imap_handler, mailbox, message_id, rules, dry_run: false)
+    def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
       warn "filtering mail (id = #{message_id} on \"#{mailbox}\")..."
 
       mail = imap_handler.fetch_header(mailbox, message_id)
