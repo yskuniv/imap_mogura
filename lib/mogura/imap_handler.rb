@@ -20,7 +20,7 @@ module Mogura
         @imap.authenticate(auth_info[:auth_type], auth_info[:user], auth_info[:password])
       end
 
-      @selected_mailbox = nil
+      initialize_selected_mailbox
     end
 
     def close
