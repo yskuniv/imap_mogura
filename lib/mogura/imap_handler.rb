@@ -91,6 +91,12 @@ module Mogura
 
     private
 
+    def with_mailbox_selected(mailbox, readonly: true, &block)
+      select_mailbox(mailbox, readonly: readonly)
+
+      block[]
+    end
+
     def select_mailbox(mailbox, readonly: true)
       return if @selected_mailbox == [mailbox, readonly]
 
