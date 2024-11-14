@@ -110,5 +110,12 @@ module Mogura
 
       @selected_mailbox = [mailbox, readonly]
     end
+
+    def close_mailbox
+      return unless @selected_mailbox
+
+      @imap.close
+      @selected_mailbox = nil
+    end
   end
 end
