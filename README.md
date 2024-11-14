@@ -42,6 +42,12 @@ Then, run the command as following. This will start monitor recent mails on "INB
 $ mogura start mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
 ```
 
+If you want to filter mails on a specific mailbox, run the command as following.
+
+```console
+$ mogura filter mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b <mailbox>
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
