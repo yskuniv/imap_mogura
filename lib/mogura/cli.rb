@@ -75,8 +75,6 @@ module Mogura
       with_all_preparation_ready(config, host, port, starttls, use_ssl,
                                  auth_info: { auth_type: auth_type, user: user, password: password },
                                  dry_run: dry_run) do |imap_handler, rules|
-        warn "* start monitoring recent mails in \"#{target_mailbox}\""
-
         if all_mailbox
           imap_handler.all_mailbox_list.each do |mailbox|
             filter_all_mails(imap_handler, rules, mailbox, dry_run: dry_run)
