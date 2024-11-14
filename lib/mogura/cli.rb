@@ -31,30 +31,17 @@ module Mogura
       config = options[:config]
       target_mailbox = options[:target_mailbox]
 
-      @dry_run = options[:dry_run]
+      dry_run = options[:dry_run]
 
-      warn "* parsing rules..."
+      with_all_preparation_ready(config, host, port, starttls, use_ssl,
+                                 auth_info: { auth_type: auth_type, user: user, password: password }) do |imap_handler, rules|
+        warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
-      rules = RulesParser.parse(File.read(config))
+        imap_handler.monitor_recents(target_mailbox) do |message_id|
+          warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
 
-      warn "* connecting the server..."
-
-      @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
-                                                  auth_info: { auth_type: auth_type, user: user, password: password })
-
-      trap("INT") do
-        @imap_handler.close
-        exit
-      end
-
-      touch_all_mailboxes_in_rules(rules)
-
-      warn "* start monitoring recent mails in \"#{target_mailbox}\""
-
-      @imap_handler.monitor_recents(target_mailbox) do |message_id|
-        warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
-
-        filter_mail(target_mailbox, message_id, rules)
+          filter_mail(imap_handler, rules, target_mailbox, message_id, dry_run: dry_run)
+        end
       end
     end
 
@@ -82,37 +69,20 @@ module Mogura
 
       raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
 
-      @dry_run = options[:dry_run]
+      dry_run = options[:dry_run]
 
-      warn "* parsing rules..."
+      with_all_preparation_ready(config, host, port, starttls, use_ssl,
+                                 auth_info: { auth_type: auth_type, user: user, password: password }) do |imap_handler, rules|
+        warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
-      rules = RulesParser.parse(File.read(config))
-
-      warn "* connecting the server..."
-
-      @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
-                                                  auth_info: { auth_type: auth_type, user: user, password: password })
-
-      trap("INT") do
-        @imap_handler.close
-        exit
-      end
-
-      touch_all_mailboxes_in_rules(rules)
-
-      if all_mailbox
-        @imap_handler.all_mailbox_list.each do |mailbox|
-          @imap_handler.handle_all_mails(mailbox) do |message_id|
-            filter_mail(mailbox, message_id, rules)
+        if all_mailbox
+          imap_handler.all_mailbox_list.each do |mailbox|
+            filter_all_mails(imap_handler, rules, mailbox, dry_run: dry_run)
           end
-        end
-      else
-        @imap_handler.handle_all_mails(target_mailbox) do |message_id|
-          filter_mail(target_mailbox, message_id, rules)
+        else
+          filter_all_mails(imap_handler, rules, target_mailbox, dry_run: dry_run)
         end
       end
-
-      @imap_handler.close
     end
 
     private
