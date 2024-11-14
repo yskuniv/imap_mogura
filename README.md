@@ -17,7 +17,7 @@ Install this gem and add to the application's Gemfile by executing:
 
 ## Usage
 
-Write `rules.yml` like following.
+Write `rules.yml` as following.
 
 ```yaml
 - destination: test
@@ -36,10 +36,18 @@ Write `rules.yml` like following.
     from: "bar@bar.example.com"
 ```
 
-Then, run like following.
+Then, run the command as following. This will start monitoring recent mails on "INBOX" and filtering them.
 
 ```console
-$ mogura start mail.example.com -u <user> --password-base64=<password base64-encoded> -c rules.yml -b INBOX
+$ mogura start mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
+```
+
+You can specify a mailbox to which monitor the mails by `-b` option.
+
+If you want to just filter mails on a specific mailbox, run the command as following.
+
+```console
+$ mogura filter mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b <mailbox>
 ```
 
 ## Development
