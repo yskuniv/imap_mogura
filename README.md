@@ -23,7 +23,7 @@ First, write `rules.yml` like following.
         - x-foo: "X-FOO"
 - destination: Trash
   rule:
-    subject: "trash-like mail"
+    subject: "hi, im trash-like email!!"
 - destination: bar
   rule:
     from: "bar@bar.example.com"
