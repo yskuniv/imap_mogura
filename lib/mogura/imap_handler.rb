@@ -80,10 +80,8 @@ module Mogura
       @imap.create(mailbox) if @imap.list("", mailbox).empty?
     end
 
-    def move(src_mailbox, src_message_id, dst_mailbox, create_mailbox: false)
+    def move(src_mailbox, src_message_id, dst_mailbox)
       return if src_mailbox == dst_mailbox # skip moving if src_mailbox is the same with dst_mailbox
-
-      touch_mailbox(dst_mailbox) if create_mailbox
 
       with_mailbox_selected(src_mailbox, readonly: false) do
         @imap.copy([src_message_id], dst_mailbox)
