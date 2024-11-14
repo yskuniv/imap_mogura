@@ -94,11 +94,9 @@ module Mogura
         dst_mailbox = rule_set.destination
         rule = rule_set.rule
 
-        warn "checking the mail matches for the destination \"#{dst_mailbox}\"..."
-
         next unless rule.match?(mail)
 
-        warn "the mail matches for the destination \"#{dst_mailbox}\""
+        warn "the mail matches the rule"
         warn "moving the mail to \"#{dst_mailbox}\"..."
 
         if @dry_run
