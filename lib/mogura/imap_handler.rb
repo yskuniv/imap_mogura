@@ -5,7 +5,6 @@ require "net/imap"
 
 module Mogura
   class IMAPHandler
-    # TODO: support starttls
     def initialize(host, port = 143, starttls: true, usessl: false, certs: nil, verify: true,
                    auth_info: nil)
       @imap = Net::IMAP.new(host, port, usessl, certs, verify)
