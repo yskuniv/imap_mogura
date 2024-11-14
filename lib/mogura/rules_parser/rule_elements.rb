@@ -90,7 +90,7 @@ module Mogura
     end
 
     def match?(mail)
-      mail.header[@field_name].value.match?(@regexp)
+      mail.headers[@field_name]&.value&.match?(@regexp)
     end
   end
 end
