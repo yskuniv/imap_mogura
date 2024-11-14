@@ -129,6 +129,8 @@ module Mogura
           end
         end
       end
+
+      @imap_handler.close_operation_for_mailbox(mailbox)
     end
   end
 end
