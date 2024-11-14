@@ -72,7 +72,7 @@ module Mogura
 
       select_mailbox(src_mailbox, readonly: false)
 
-      @imap.copy([src_message_id], dst_mailbox)
+      @imap.copy([src_message_id], dst_mailbox) # FIXME: This copy seems not working, it's dangerous...
       @imap.store(src_message_id, "+FLAGS", [:Deleted])
     end
 
