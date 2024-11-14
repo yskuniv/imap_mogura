@@ -88,16 +88,18 @@ module Mogura
 
       mail = @imap_handler.fetch_header(mailbox, message_id)
 
+      warn "start checking mail (id = #{message_id} on \"#{mailbox}\" with subject \"#{mail.subject}\") matches the rule..."
+
       rules.each do |rule_set|
         dst_mailbox = rule_set.destination
         rule = rule_set.rule
 
-        warn "checking mail (id = #{message_id} on \"#{mailbox}\" with subject \"#{mail.subject}\") matches the rule for the destination \"#{dst_mailbox}\"..."
+        warn "checking the mail matches for the destination \"#{dst_mailbox}\"..."
 
         next unless rule.match?(mail)
 
-        warn "mail (id = #{message_id} on \"#{mailbox}\" with subject \"#{mail.subject}\") matches the rule"
-        warn "moving mail (id = #{message_id} on \"#{mailbox}\") to \"#{dst_mailbox}\"..."
+        warn "the mail matches for the destination \"#{dst_mailbox}\""
+        warn "moving the mail to \"#{dst_mailbox}\"..."
 
         if @dry_run
           warn "moving skipped because of dry run"
