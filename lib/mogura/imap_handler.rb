@@ -80,6 +80,8 @@ module Mogura
 
       @imap.copy([src_message_id], dst_mailbox)
       @imap.store(src_message_id, "+FLAGS", [:Deleted])
+
+      dst_mailbox
     end
 
     private
