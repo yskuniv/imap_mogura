@@ -34,7 +34,8 @@ module Mogura
       dry_run = options[:dry_run]
 
       with_all_preparation_ready(config, host, port, starttls, use_ssl,
-                                 auth_info: { auth_type: auth_type, user: user, password: password }) do |imap_handler, rules|
+                                 auth_info: { auth_type: auth_type, user: user, password: password },
+                                 dry_run: dry_run) do |imap_handler, rules|
         warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
         imap_handler.monitor_recents(target_mailbox) do |message_id|
@@ -72,9 +73,8 @@ module Mogura
       dry_run = options[:dry_run]
 
       with_all_preparation_ready(config, host, port, starttls, use_ssl,
-                                 auth_info: { auth_type: auth_type, user: user, password: password }) do |imap_handler, rules|
-        warn "* start monitoring recent mails in \"#{target_mailbox}\""
-
+                                 auth_info: { auth_type: auth_type, user: user, password: password },
+                                 dry_run: dry_run) do |imap_handler, rules|
         if all_mailbox
           imap_handler.all_mailbox_list.each do |mailbox|
             filter_all_mails(imap_handler, rules, mailbox, dry_run: dry_run)
@@ -87,7 +87,7 @@ module Mogura
 
     private
 
-    def with_all_preparation_ready(config, host, port, starttls, use_ssl, certs: nil, verify: true, auth_info: nil, &block)
+    def with_all_preparation_ready(config, host, port, starttls, use_ssl, certs: nil, verify: true, auth_info: nil, dry_run: false, &block)
       rules = RulesParser.parse(File.read(config))
 
       warn "* connecting the server \"#{host}:#{port}\"..."
@@ -96,12 +96,13 @@ module Mogura
                                      starttls: starttls, usessl: use_ssl, certs: certs, verify: verify,
                                      auth_info: auth_info)
 
-      trap("INT") do
-        imap_handler.close
-        exit
-      end
+      # FIXME: this doesn't work expectedly
+      # trap("INT") do
+      #   imap_handler.close
+      #   exit
+      # end
 
-      touch_all_mailboxes_in_rules(rules)
+      touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: dry_run)
 
       block[imap_handler, rules]
 
