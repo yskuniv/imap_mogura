@@ -42,6 +42,8 @@ Then, run the command as following. This will start monitoring recent mails on "
 $ mogura start mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
 ```
 
+You can specify a mailbox to which monitor the mails by `-b` option.
+
 If you want to filter mails on a specific mailbox, run the command as following.
 
 ```console
