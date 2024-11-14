@@ -96,10 +96,11 @@ module Mogura
                                      starttls: starttls, usessl: use_ssl, certs: certs, verify: verify,
                                      auth_info: auth_info)
 
-      trap("INT") do
-        imap_handler.close
-        exit
-      end
+      # FIXME: this doesn't work expectedly
+      # trap("INT") do
+      #   imap_handler.close
+      #   exit
+      # end
 
       touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: dry_run)
 
