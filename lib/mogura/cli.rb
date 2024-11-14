@@ -104,7 +104,7 @@ module Mogura
         if @dry_run
           warn "moving skipped because of dry run"
         else
-          @imap_handler.move(mailbox, message_id, dst_mailbox)
+          @imap_handler.move(mailbox, message_id, dst_mailbox, create_mailbox: true)
 
           warn "moving done"
         end
