@@ -101,6 +101,8 @@ module Mogura
           filter_mail(target_mailbox, message_id, rules)
         end
       end
+
+      @imap_handler.close
     end
 
     private
