@@ -20,7 +20,12 @@ module Mogura
         @imap.authenticate(auth_info[:auth_type], auth_info[:user], auth_info[:password])
       end
 
-      @selected_mailbox = [nil, nil]
+      initialize_selected_mailbox
+    end
+
+    def close
+      close_mailbox
+      @imap.disconnect
     end
 
     def monitor_recents(mailbox, &block)
@@ -49,6 +54,7 @@ module Mogura
 
     def handle_all_mails(mailbox, &block)
       select_mailbox(mailbox)
+
       @imap.search(["ALL"]).each do |message_id|
         break unless block
 
@@ -57,37 +63,54 @@ module Mogura
     end
 
     def fetch_envelope(mailbox, message_id)
-      select_mailbox(mailbox)
-      @imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
+      with_mailbox_selected(mailbox) do
+        @imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
+      end
     end
 
     def fetch_header(mailbox, message_id)
-      select_mailbox(mailbox)
-      fetch_data = @imap.fetch(message_id, "BODY.PEEK[HEADER]")[0].attr["BODY[HEADER]"]
-      Mail.read_from_string(fetch_data)
+      with_mailbox_selected(mailbox) do
+        fetch_data = @imap.fetch(message_id, "BODY.PEEK[HEADER]")[0].attr["BODY[HEADER]"]
+
+        Mail.read_from_string(fetch_data)
+      end
     end
 
     def touch_mailbox(mailbox)
       @imap.create(mailbox) if @imap.list("", mailbox).empty?
     end
 
-    def move(src_mailbox, src_message_id, dst_mailbox, create_mailbox: false)
+    def move(src_mailbox, src_message_id, dst_mailbox)
       return if src_mailbox == dst_mailbox # skip moving if src_mailbox is the same with dst_mailbox
 
-      touch_mailbox(dst_mailbox) if create_mailbox
-
-      select_mailbox(src_mailbox, readonly: false)
-
-      @imap.copy([src_message_id], dst_mailbox)
-      @imap.store(src_message_id, "+FLAGS", [:Deleted])
+      with_mailbox_selected(src_mailbox, readonly: false) do
+        @imap.copy([src_message_id], dst_mailbox)
+        @imap.store(src_message_id, "+FLAGS", [:Deleted])
+      end
 
       dst_mailbox
     end
 
+    def close_operation_for_mailbox(_)
+      close_mailbox
+    end
+
     private
+
+    def initialize_selected_mailbox
+      @selected_mailbox = nil
+    end
+
+    def with_mailbox_selected(mailbox, readonly: true, &block)
+      select_mailbox(mailbox, readonly: readonly)
+
+      block[]
+    end
 
     def select_mailbox(mailbox, readonly: true)
       return if @selected_mailbox == [mailbox, readonly]
+
+      close_mailbox
 
       if readonly
         @imap.examine(mailbox)
@@ -96,6 +119,13 @@ module Mogura
       end
 
       @selected_mailbox = [mailbox, readonly]
+    end
+
+    def close_mailbox
+      return unless @selected_mailbox
+
+      @imap.close
+      @selected_mailbox = nil
     end
   end
 end

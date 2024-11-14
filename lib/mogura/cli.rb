@@ -42,6 +42,13 @@ module Mogura
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
                                                   auth_info: { auth_type: auth_type, user: user, password: password })
 
+      trap("INT") do
+        @imap_handler.close
+        exit
+      end
+
+      touch_all_mailboxes_in_rules(rules)
+
       warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
       @imap_handler.monitor_recents(target_mailbox) do |message_id|
@@ -86,6 +93,13 @@ module Mogura
       @imap_handler = IMAPHandler.new(host, port, starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
                                                   auth_info: { auth_type: auth_type, user: user, password: password })
 
+      trap("INT") do
+        @imap_handler.close
+        exit
+      end
+
+      touch_all_mailboxes_in_rules(rules)
+
       if all_mailbox
         @imap_handler.all_mailbox_list.each do |mailbox|
           @imap_handler.handle_all_mails(mailbox) do |message_id|
@@ -97,9 +111,18 @@ module Mogura
           filter_mail(target_mailbox, message_id, rules)
         end
       end
+
+      @imap_handler.close
     end
 
     private
+
+    def touch_all_mailboxes_in_rules(rules)
+      rules.each do |rule_set|
+        dst_mailbox = rule_set.destination
+        @imap_handler.touch_mailbox(dst_mailbox)
+      end
+    end
 
     def filter_mail(mailbox, message_id, rules)
       warn "filtering mail (id = #{message_id} on \"#{mailbox}\")..."
@@ -129,6 +152,8 @@ module Mogura
           end
         end
       end
+
+      @imap_handler.close_operation_for_mailbox(mailbox)
     end
   end
 end
