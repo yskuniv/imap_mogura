@@ -20,6 +20,7 @@ module Mogura
     option :password_base64, type: :string
     option :config, type: :string, aliases: :c, required: true
     option :target_mailbox, type: :string, aliases: :b, required: true
+    option :create_directory, type: :boolean, default: true
     option :dry_run, type: :boolean, default: false
     def start(host)
       port = options[:port]
@@ -31,10 +32,12 @@ module Mogura
       config = options[:config]
       target_mailbox = options[:target_mailbox]
 
+      create_directory = options[:create_directory]
       dry_run = options[:dry_run]
 
       with_all_preparation_ready(config, host, port, starttls, use_ssl,
                                  auth_info: { auth_type: auth_type, user: user, password: password },
+                                 create_directory: create_directory,
                                  dry_run: dry_run) do |imap_handler, rules|
         warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
@@ -56,6 +59,7 @@ module Mogura
     option :config, type: :string, aliases: :c, required: true
     option :all_mailbox, type: :boolean, default: false, aliases: :a
     option :target_mailbox, type: :string, aliases: :b
+    option :create_directory, type: :boolean, default: true
     option :dry_run, type: :boolean, default: false
     def filter(host)
       port = options[:port]
@@ -70,10 +74,12 @@ module Mogura
 
       raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
 
+      create_directory = options[:create_directory]
       dry_run = options[:dry_run]
 
       with_all_preparation_ready(config, host, port, starttls, use_ssl,
                                  auth_info: { auth_type: auth_type, user: user, password: password },
+                                 create_directory: create_directory,
                                  dry_run: dry_run) do |imap_handler, rules|
         if all_mailbox
           imap_handler.all_mailbox_list.each do |mailbox|
@@ -87,7 +93,12 @@ module Mogura
 
     private
 
-    def with_all_preparation_ready(config, host, port, starttls, use_ssl, certs: nil, verify: true, auth_info: nil, dry_run: false, &block)
+    def with_all_preparation_ready(config,
+                                   host, port,
+                                   starttls, use_ssl, certs: nil, verify: true,
+                                   auth_info: nil,
+                                   create_directory: true,
+                                   dry_run: false, &block)
       rules = RulesParser.parse(File.read(config))
 
       warn "* connecting the server \"#{host}:#{port}\"..."
@@ -102,7 +113,7 @@ module Mogura
       #   exit
       # end
 
-      touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: dry_run)
+      touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: dry_run) if create_directory
 
       block[imap_handler, rules]
 
