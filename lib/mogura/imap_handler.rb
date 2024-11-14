@@ -43,6 +43,10 @@ module Mogura
       end
     end
 
+    def all_mailbox_list
+      @imap.list("", "*").map(&:name)
+    end
+
     def handle_all_mails(mailbox, &block)
       select_mailbox(mailbox)
       @imap.search(["ALL"]).each do |message_id|
