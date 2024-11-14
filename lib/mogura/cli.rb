@@ -118,6 +118,8 @@ module Mogura
     private
 
     def touch_all_mailboxes_in_rules(rules)
+      return if @dry_run
+
       rules.each do |rule_set|
         dst_mailbox = rule_set.destination
         @imap_handler.touch_mailbox(dst_mailbox)
