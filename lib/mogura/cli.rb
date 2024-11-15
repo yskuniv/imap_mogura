@@ -58,6 +58,7 @@ module Mogura
     option :password_base64, type: :string
     option :config, type: :string, aliases: :c, required: true
     option :all_mailbox, type: :boolean, default: false, aliases: :a
+    option :exclude_mailboxes, type: :array, default: []
     option :target_mailbox, type: :string, aliases: :b
     option :create_directory, type: :boolean, default: true
     option :dry_run, type: :boolean, default: false
@@ -70,6 +71,7 @@ module Mogura
       password = Base64.decode64(options[:password_base64])
       config_name = options[:config]
       all_mailbox = options[:all_mailbox]
+      exclude_mailboxes = options[:exclude_mailboxes]
       target_mailbox = options[:target_mailbox] unless all_mailbox
 
       raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
@@ -79,10 +81,13 @@ module Mogura
 
       with_all_preparation_ready(config_name, host, port, starttls, use_ssl,
                                  auth_info: { auth_type: auth_type, user: user, password: password },
+                                 excluded_mailboxes: exclude_mailboxes,
                                  create_directory: create_directory,
-                                 dry_run: dry_run) do |imap_handler, rules|
+                                 dry_run: dry_run) do |imap_handler, rules, options|
         if all_mailbox
-          imap_handler.all_mailbox_list.each do |mailbox|
+          excluded_mailboxes = options[:excluded_mailboxes]
+
+          imap_handler.all_mailbox_list.reject { |mailbox| excluded_mailboxes.include?(mailbox) }.each do |mailbox|
             filter_all_mails(imap_handler, rules, mailbox, dry_run: dry_run)
           end
         else
@@ -121,6 +126,7 @@ module Mogura
                                    host, port,
                                    starttls, use_ssl, certs: nil, verify: true,
                                    auth_info: nil,
+                                   excluded_mailboxes: [],
                                    create_directory: true,
                                    dry_run: false, &block)
       config = YAML.safe_load_file(config_name)
@@ -141,7 +147,9 @@ module Mogura
 
       touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: dry_run) if create_directory
 
-      block[imap_handler, rules]
+      options = { excluded_mailboxes: excluded_mailboxes }
+
+      block[imap_handler, rules, options]
 
       imap_handler.close
     end
