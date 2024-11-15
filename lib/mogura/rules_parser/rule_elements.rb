@@ -59,13 +59,23 @@ module Mogura
 
   class ToMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.to&.any? { |address| address&.match?(@regexp) }
+      case mail.to
+      when Enumerable
+        mail.to.any? { |address| address&.match?(@regexp) }
+      else
+        mail.to&.match?(@regexp)
+      end
     end
   end
 
   class CcMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.cc&.any? { |address| address&.match?(@regexp) }
+      case mail.cc
+      when Enumerable
+        mail.cc.any? { |address| address&.match?(@regexp) }
+      else
+        mail.cc&.match?(@regexp)
+      end
     end
   end
 
