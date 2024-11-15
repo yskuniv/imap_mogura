@@ -5,6 +5,20 @@ require "net/imap"
 
 module Mogura
   class IMAPHandler
+    class Error < StandardError; end
+
+    class MailFetchError < Error
+      def initialize(mailbox, message_id, bad_response_error_message)
+        @mailbox = mailbox
+        @message_id = message_id
+        @bad_response_error_message = bad_response_error_message
+
+        super("failed to fetch mail: id = #{message_id} on \"#{mailbox}\", message = \"#{bad_response_error_message}\"")
+      end
+
+      attr_reader :mailbox, :message_id, :bad_response_error_message
+    end
+
     def initialize(host, port = 143, starttls: true, usessl: false, certs: nil, verify: true,
                    auth_info: nil)
       @imap = Net::IMAP.new(host, port, usessl, certs, verify)
@@ -64,6 +78,8 @@ module Mogura
     def fetch_envelope(mailbox, message_id)
       with_mailbox_selected(mailbox) do
         @imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
+      rescue Net::IMAP::BadResponseError => e
+        raise MailFetchError.new(mailbox, message_id, e.message)
       end
     end
 
@@ -72,6 +88,8 @@ module Mogura
         fetch_data = @imap.fetch(message_id, "BODY.PEEK[HEADER]")[0].attr["BODY[HEADER]"]
 
         Mail.read_from_string(fetch_data)
+      rescue Net::IMAP::BadResponseError => e
+        raise MailFetchError.new(mailbox, message_id, e.message)
       end
     end
 
