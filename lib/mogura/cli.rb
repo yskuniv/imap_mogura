@@ -29,13 +29,13 @@ module Mogura
       auth_type = options[:auth_type] if use_ssl
       user = options[:user]
       password = Base64.decode64(options[:password_base64])
-      config = options[:config]
+      config_name = options[:config]
       target_mailbox = options[:target_mailbox]
 
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
 
-      with_all_preparation_ready(config, host, port, starttls, use_ssl,
+      with_all_preparation_ready(config_name, host, port, starttls, use_ssl,
                                  auth_info: { auth_type: auth_type, user: user, password: password },
                                  create_directory: create_directory,
                                  dry_run: dry_run) do |imap_handler, rules|
@@ -68,7 +68,7 @@ module Mogura
       auth_type = options[:auth_type] if use_ssl
       user = options[:user]
       password = Base64.decode64(options[:password_base64])
-      config = options[:config]
+      config_name = options[:config]
       all_mailbox = options[:all_mailbox]
       target_mailbox = options[:target_mailbox] unless all_mailbox
 
@@ -77,7 +77,7 @@ module Mogura
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
 
-      with_all_preparation_ready(config, host, port, starttls, use_ssl,
+      with_all_preparation_ready(config_name, host, port, starttls, use_ssl,
                                  auth_info: { auth_type: auth_type, user: user, password: password },
                                  create_directory: create_directory,
                                  dry_run: dry_run) do |imap_handler, rules|
@@ -117,13 +117,15 @@ module Mogura
 
     private
 
-    def with_all_preparation_ready(config,
+    def with_all_preparation_ready(config_name,
                                    host, port,
                                    starttls, use_ssl, certs: nil, verify: true,
                                    auth_info: nil,
                                    create_directory: true,
                                    dry_run: false, &block)
-      rules = RulesParser.parse(File.read(config))
+      config = YAML.safe_load_file(config_name)
+
+      rules = RulesParser.parse(config["rules"])
 
       warn "* connecting the server #{host}:#{port}..."
 

@@ -11,10 +11,9 @@ require_relative "rules_parser/rule_elements"
 module Mogura
   module RulesParser
     class << self
-      def parse(yaml)
-        rules = YAML.safe_load(yaml)
-
-        raise ParseError, "top level is required to be just only one array" unless rules.is_a?(Array)
+      def parse(rules)
+        raise ParseError, "rules is not defined" if rules.nil?
+        raise ParseError, "rules is required to be just only one array" unless rules.is_a?(Array)
 
         rules.map do |item|
           rule_set = RuleSet.new(item)
