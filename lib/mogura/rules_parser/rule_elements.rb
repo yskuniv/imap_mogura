@@ -47,7 +47,12 @@ module Mogura
 
   class FromMatcher < SpecialFieldMatcher
     def match?(mail)
-      mail.from&.any? { |address| address&.match?(@regexp) }
+      case mail.from
+      when Enumerable
+        mail.from.any? { |address| address&.match?(@regexp) }
+      else
+        mail.from&.match?(@regexp)
+      end
     end
   end
 
