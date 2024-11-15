@@ -12,6 +12,7 @@ module Mogura
   module RulesParser
     class << self
       def parse(rules)
+        raise ParseError, "rules is not defined" if rules.nil?
         raise ParseError, "rules is required to be just only one array" unless rules.is_a?(Array)
 
         rules.map do |item|
