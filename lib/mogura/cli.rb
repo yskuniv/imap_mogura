@@ -123,7 +123,9 @@ module Mogura
                                    auth_info: nil,
                                    create_directory: true,
                                    dry_run: false, &block)
-      rules = RulesParser.parse(File.read(config_name))
+      config = YAML.safe_load_file(config_name)
+
+      rules = RulesParser.parse(config["rules"])
 
       warn "* connecting the server #{host}:#{port}..."
 
