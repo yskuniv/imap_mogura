@@ -165,7 +165,7 @@ module Mogura
       # wait a moment...
       sleep 10
 
-      # retry filter all mails
+      # retry filter all mails itself
       filter_all_mails(imap_handler, rules, mailbox, dry_run: dry_run)
     end
 
