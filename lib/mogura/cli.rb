@@ -161,6 +161,12 @@ module Mogura
       imap_handler.handle_all_mails(mailbox) do |message_id|
         filter_mail(imap_handler, rules, mailbox, message_id, dry_run: dry_run)
       end
+    rescue IMAPHandler::MailFetchError
+      # wait a moment...
+      sleep 10
+
+      # retry filter all mails
+      filter_all_mails(imap_handler, rules, mailbox, dry_run: dry_run)
     end
 
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
