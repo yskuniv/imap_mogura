@@ -190,7 +190,11 @@ module Mogura
           warn "moving skipped because this is dry run"
         else
           result = imap_handler.move(mailbox, message_id, dst_mailbox)
-          warn "moving done" if result
+          if result
+            warn "moving done"
+          else
+            warn "moving skipped because the destination is the same with the current mailbox \"#{mailbox}\""
+          end
         end
       end
 
