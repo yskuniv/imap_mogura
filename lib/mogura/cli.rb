@@ -175,7 +175,7 @@ module Mogura
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
       mail = imap_handler.fetch_header(mailbox, message_id)
 
-      warn "# filtering mail of subject \"#{mail.subject}\"..."
+      warn "# filtering mail on \"#{mailbox}\" of subject \"#{mail.subject}\"..."
 
       rules.each do |rule_set|
         dst_mailbox = rule_set.destination
