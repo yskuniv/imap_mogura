@@ -2,7 +2,6 @@
 
 require "English"
 require "json"
-require "yaml"
 
 require_relative "rules_parser/errors"
 require_relative "rules_parser/rule_set"
