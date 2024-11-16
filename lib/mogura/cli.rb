@@ -11,6 +11,12 @@ module Mogura
   end
 
   class CLI < Thor
+    class << self
+      def exit_on_failure?
+        true
+      end
+    end
+
     desc "start HOST", "connect to HOST and start watching"
     option :port, type: :numeric, default: 143, aliases: :p
     option :starttls, type: :boolean, default: true
@@ -129,9 +135,9 @@ module Mogura
                                    excluded_mailboxes: [],
                                    create_directory: true,
                                    dry_run: false, &block)
-      config = YAML.safe_load_file(config_name)
+      _, raw_rules = ConfigParser.parse(config_name)
 
-      rules = RulesParser.parse(config["rules"])
+      rules = RulesParser.parse(raw_rules)
 
       warn "* connecting the server #{host}:#{port}..."
 
@@ -152,6 +158,10 @@ module Mogura
       block[imap_handler, rules, options]
 
       imap_handler.close
+    rescue ConfigParser::ParseError => e
+      raise Thor::Error, "Error: failed to parse config: #{e.message}"
+    rescue RulesParser::ParseError => e
+      raise Thor::Error, "Error: failed to parse rules: #{e.message}"
     end
 
     def touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: false)
