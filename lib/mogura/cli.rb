@@ -158,6 +158,10 @@ module Mogura
       block[imap_handler, rules, options]
 
       imap_handler.close
+    rescue ConfigParser::ParseError => e
+      raise Thor::Error, "Error: failed to parse config: #{e.message}"
+    rescue RulesParser::ParseError => e
+      raise Thor::Error, "Error: failed to parse rules: #{e.message}"
     end
 
     def touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: false)
