@@ -135,9 +135,9 @@ module Mogura
                                    excluded_mailboxes: [],
                                    create_directory: true,
                                    dry_run: false, &block)
-      config = YAML.safe_load_file(config_name)
+      _, raw_rules = ConfigParser.parse(config_name)
 
-      rules = RulesParser.parse(config["rules"])
+      rules = RulesParser.parse(raw_rules)
 
       warn "* connecting the server #{host}:#{port}..."
 
