@@ -11,6 +11,12 @@ module Mogura
   end
 
   class CLI < Thor
+    class << self
+      def exit_on_failure?
+        true
+      end
+    end
+
     desc "start HOST", "connect to HOST and start watching"
     option :port, type: :numeric, default: 143, aliases: :p
     option :starttls, type: :boolean, default: true
