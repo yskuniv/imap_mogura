@@ -68,13 +68,7 @@ module Mogura
     end
 
     def handle_all_mails(mailbox, &block)
-      select_mailbox(mailbox)
-
-      @imap.search(["ALL"]).each do |message_id|
-        break unless block
-
-        block[message_id]
-      end
+      find_and_handle_mails(mailbox, ["ALL"], &block)
     end
 
     def find_and_handle_mails(mailbox, search_keys, &block)
