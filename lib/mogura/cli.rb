@@ -126,6 +126,16 @@ module Mogura
       imap_handler.close
     end
 
+    desc "check-config", "check config specified by --config / -c"
+    option :config, type: :string, aliases: :c, required: true
+    def check_config
+      config_name = options[:config]
+
+      load_and_handle_config(config_name)
+
+      warn "OK"
+    end
+
     private
 
     def with_all_preparation_ready(config_name,
@@ -135,9 +145,7 @@ module Mogura
                                    excluded_mailboxes: [],
                                    create_directory: true,
                                    dry_run: false, &block)
-      _, raw_rules = ConfigParser.parse(config_name)
-
-      rules = RulesParser.parse(raw_rules)
+      _, rules = load_and_handle_config(config_name)
 
       warn "* connecting the server #{host}:#{port}..."
 
@@ -158,6 +166,14 @@ module Mogura
       block[imap_handler, rules, options]
 
       imap_handler.close
+    end
+
+    def load_and_handle_config(config_name)
+      metadata, raw_rules = ConfigParser.parse(config_name)
+
+      rules = RulesParser.parse(raw_rules)
+
+      [metadata, rules]
     rescue ConfigParser::ParseError => e
       raise Thor::Error, "Error: failed to parse config: #{e.message}"
     rescue RulesParser::ParseError => e
