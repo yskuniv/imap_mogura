@@ -4,7 +4,7 @@ A mail filtering tool for IMAP.
 
 ## Installation
 
-Check out this repo first and enter the directory.
+Check out this repository first and enter the directory.
 
 ```console
 $ git clone https://github.com/yskuniv/mogura.git
