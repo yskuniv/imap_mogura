@@ -4,7 +4,7 @@ A mail filtering tool for IMAP.
 
 ## Installation
 
-Check out this repo first and enter the directory.
+Check out this repository first and enter the directory.
 
 ```console
 $ git clone https://github.com/yskuniv/mogura.git
@@ -38,18 +38,18 @@ rules:
       subject: "i'm trash-like email!!"
 ```
 
-Then, run the command as following. This will start monitoring recent mails on "INBOX" and filtering them.
+As following `start` command, which will start monitoring RECENT mails on "INBOX". If a mail is coming, and it's RECENT, it will be filtered.
 
 ```console
-$ mogura start mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
+$ mogura start <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
 ```
 
-You can specify a mailbox to which monitor the mails by `-b` option.
+You can specify a mailbox to which be monitored by `-b` option.
 
-If you want to just filter mails on a specific mailbox, run the command as following.
+If you want to just filter mails on a specific mailbox, run the `filter` command as following.
 
 ```console
-$ mogura filter mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b <mailbox>
+$ mogura filter <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b <mailbox>
 ```
 
 You can check your config by `check-config` command. It returns just OK if no problems in the specified config.
