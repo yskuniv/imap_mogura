@@ -197,12 +197,22 @@ module Mogura
       imap_handler.handle_all_mails(mailbox) do |message_id|
         filter_mail(imap_handler, rules, mailbox, message_id, dry_run: dry_run)
       end
-    rescue IMAPHandler::MailFetchError
+    rescue IMAPHandler::MailFetchError => e
+      warn "failed to fetch mail (id = #{e.message_id} on mailbox #{e.mailbox}): #{e.bad_response_error_message}"
+
       # if retry_count is over the threshold, terminate processing
-      return unless retry_count < 3
+      unless retry_count < 3
+        warn "retry count is over the threshold, stop processing"
+
+        return
+      end
+
+      warn "wait a moment..."
 
       # wait a moment...
       sleep 10
+
+      warn "retry filter all mails on #{e.mailbox}"
 
       # retry filter all mails itself
       filter_all_mails(imap_handler, rules, mailbox, retry_count + 1, dry_run: dry_run)
