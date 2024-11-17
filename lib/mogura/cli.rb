@@ -26,6 +26,7 @@ module Mogura
     option :password_base64, type: :string
     option :config, type: :string, aliases: :c, required: true
     option :target_mailbox, type: :string, aliases: :b, required: true
+    option :filter_unseen, type: :bool, default: true
     option :create_directory, type: :boolean, default: true
     option :dry_run, type: :boolean, default: false
     def start(host)
@@ -37,9 +38,12 @@ module Mogura
       password = Base64.decode64(options[:password_base64])
       config_name = options[:config]
       target_mailbox = options[:target_mailbox]
-
+      filter_unseen = options[:filter_unseen]
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
+
+      monitored_events = ["RECENT"]
+      search_keys = ["RECENT", *(["UNSEEN"] if filter_unseen)]
 
       with_all_preparation_ready(config_name, host, port, starttls, use_ssl,
                                  auth_info: { auth_type: auth_type, user: user, password: password },
@@ -47,10 +51,12 @@ module Mogura
                                  dry_run: dry_run) do |imap_handler, rules|
         warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
-        imap_handler.monitor_recents(target_mailbox) do |message_id|
-          warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
+        imap_handler.monitor_events(target_mailbox, monitored_events) do
+          imap_handler.find_and_handle_mails(target_mailbox, search_keys) do |message_id|
+            warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
 
-          filter_mail(imap_handler, rules, target_mailbox, message_id, dry_run: dry_run)
+            filter_mail(imap_handler, rules, target_mailbox, message_id, dry_run: dry_run)
+          end
         end
       end
     end
