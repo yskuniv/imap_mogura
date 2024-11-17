@@ -31,7 +31,7 @@ rules:
 
   - destination: bar
     rule:
-      from: "bar@bar\\.example\\.com"
+      from: "no-reply@bar\\.example\\.com"
 
   - destination: Trash
     rule:
