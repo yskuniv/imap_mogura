@@ -135,9 +135,7 @@ module Mogura
                                    excluded_mailboxes: [],
                                    create_directory: true,
                                    dry_run: false, &block)
-      _, raw_rules = ConfigParser.parse(config_name)
-
-      rules = RulesParser.parse(raw_rules)
+      _, rules = load_and_handle_config(config_name)
 
       warn "* connecting the server #{host}:#{port}..."
 
@@ -158,10 +156,6 @@ module Mogura
       block[imap_handler, rules, options]
 
       imap_handler.close
-    rescue ConfigParser::ParseError => e
-      raise Thor::Error, "Error: failed to parse config: #{e.message}"
-    rescue RulesParser::ParseError => e
-      raise Thor::Error, "Error: failed to parse rules: #{e.message}"
     end
 
     def load_and_handle_config(config_name)
