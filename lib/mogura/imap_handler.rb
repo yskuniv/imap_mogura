@@ -57,7 +57,11 @@ module Mogura
       select_mailbox(mailbox)
 
       @imap.idle do |resp|
-        @imap.idle_done if expected_response_names.include? resp.name
+        if expected_response_names.include? resp.name
+          @imap.idle_done
+
+          return resp
+        end
       end
     end
 
