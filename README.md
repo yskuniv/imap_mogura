@@ -38,7 +38,7 @@ rules:
       subject: "i'm trash-like email!!"
 ```
 
-Then, run the command as following. This will start monitoring recent mails on "INBOX" and filtering them.
+As following command, which will start monitoring RECENT mails on "INBOX". If a mail is coming (and it's RECENT), it will be filtered.
 
 ```console
 $ mogura start mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
