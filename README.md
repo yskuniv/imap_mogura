@@ -20,20 +20,22 @@ Install this gem and add to the application's Gemfile by executing:
 Create `rules.yml` and write rules like following.
 
 ```yaml
-- destination: test
-  rule:
-    and:
-      - subject: "^\\[TEST "
-      - or:
-        - sender: "test@example\\.com"
-        - x-test: "X-TEST"
-        - x-foo: "X-FOO"
-- destination: Trash
-  rule:
-    subject: "hi, im trash-like email!!"
-- destination: bar
-  rule:
-    from: "bar@bar\\.example\\.com"
+rules:
+  - destination: test
+    rule:
+      and:
+        - subject: "^\\[TEST "
+        - or:
+          - sender: "test@example\\.com"
+          - x-test: "X-TEST"
+
+  - destination: bar
+    rule:
+      from: "no-reply@bar\\.example\\.com"
+
+  - destination: Trash
+    rule:
+      subject: "i'm trash-like email!!"
 ```
 
 Then, run the command as following. This will start monitoring recent mails on "INBOX" and filtering them.
