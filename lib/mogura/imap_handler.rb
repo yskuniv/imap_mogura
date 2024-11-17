@@ -41,15 +41,13 @@ module Mogura
       @imap.disconnect
     end
 
-    def monitor_recents(mailbox, &block)
+    def monitor_events(mailbox, events, &block)
       loop do
-        wait_event_with_idle(mailbox, ["RECENT"])
+        resp = wait_event_with_idle(mailbox, events)
 
-        @imap.search(["RECENT"]).each do |message_id|
-          break unless block
+        break unless block
 
-          block[message_id]
-        end
+        block[resp]
       end
     end
 
