@@ -44,7 +44,7 @@ As following command, which will start monitoring RECENT mails on "INBOX". If a 
 $ mogura start mail.example.com -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
 ```
 
-You can specify a mailbox to which monitor the mails by `-b` option.
+You can specify a mailbox to which be monitored by `-b` option.
 
 If you want to just filter mails on a specific mailbox, run the command as following.
 
