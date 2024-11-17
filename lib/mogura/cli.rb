@@ -199,8 +199,8 @@ module Mogura
       end
     end
 
-    def filter_all_mails(imap_handler, rules, mailbox, retry_count = 0, dry_run: false)
-      imap_handler.handle_all_mails(mailbox) do |message_id|
+    def filter_mails(imap_handler, rules, mailbox, search_keys = ["ALL"], retry_count = 0, dry_run: false)
+      imap_handler.find_and_handle_mails(mailbox, search_keys) do |message_id|
         filter_mail(imap_handler, rules, mailbox, message_id, dry_run: dry_run)
       end
     rescue IMAPHandler::MailFetchError => e
@@ -221,7 +221,7 @@ module Mogura
       warn "retry filter all mails on #{e.mailbox}"
 
       # retry filter all mails itself
-      filter_all_mails(imap_handler, rules, mailbox, retry_count + 1, dry_run: dry_run)
+      filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
     end
 
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
