@@ -164,6 +164,18 @@ module Mogura
       raise Thor::Error, "Error: failed to parse rules: #{e.message}"
     end
 
+    def load_and_handle_config(config_name)
+      metadata, raw_rules = ConfigParser.parse(config_name)
+
+      rules = RulesParser.parse(raw_rules)
+
+      [metadata, rules]
+    rescue ConfigParser::ParseError => e
+      raise Thor::Error, "Error: failed to parse config: #{e.message}"
+    rescue RulesParser::ParseError => e
+      raise Thor::Error, "Error: failed to parse rules: #{e.message}"
+    end
+
     def touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: false)
       rules.each do |rule_set|
         dst_mailbox = rule_set.destination
