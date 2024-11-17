@@ -126,6 +126,16 @@ module Mogura
       imap_handler.close
     end
 
+    desc "check-config", "check config specified by --config / -c"
+    option :config, type: :string, aliases: :c, required: true
+    def check_config
+      config_name = options[:config]
+
+      load_and_handle_config(config_name)
+
+      warn "OK"
+    end
+
     private
 
     def with_all_preparation_ready(config_name,
