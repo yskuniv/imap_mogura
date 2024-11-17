@@ -35,7 +35,7 @@ rules:
 
   - destination: Trash
     rule:
-      subject: "im trash-like email!!"
+      subject: "i'm trash-like email!!"
 ```
 
 Then, run the command as following. This will start monitoring recent mails on "INBOX" and filtering them.
