@@ -50,4 +50,4 @@ jobs:
     - name: Build gem
       run: gem build imap_mogura.gemspec
     - name: Publish gem
-      run: gem push imap_mogura-0.1.0.gem
+      run: gem push imap_mogura-${{ github.ref }}.gem
