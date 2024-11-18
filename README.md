@@ -4,10 +4,12 @@ A mail filtering tool for IMAP.
 
 ## Installation
 
-To install this gem, you can install it from RubyGems.org, just run as following.
+To install this gem, you can install it from RubyGems.org. Just run as following.
+
+(This gem is pre version yet, so you must specify `--pre` option)
 
 ```console
-$ gem install imap_mogura
+$ gem install imap_mogura --pre
 ```
 
 ## Usage
