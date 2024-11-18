@@ -72,6 +72,7 @@ module Mogura
     option :all_mailbox, type: :boolean, default: false, aliases: :a
     option :exclude_mailboxes, type: :array, default: []
     option :target_mailbox, type: :string, aliases: :b
+    option :filter_only_unseen, type: :bool, default: false
     option :create_directory, type: :boolean, default: true
     option :dry_run, type: :boolean, default: false
     def filter(host)
@@ -88,8 +89,15 @@ module Mogura
 
       raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
 
+      filter_only_unseen = options[:filter_only_unseen]
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
+
+      search_keys = if filter_only_unseen
+                      ["UNSEEN"]
+                    else
+                      ["ALL"]
+                    end
 
       with_all_preparation_ready(config_name, host, port, starttls, use_ssl,
                                  auth_info: { auth_type: auth_type, user: user, password: password },
@@ -100,10 +108,10 @@ module Mogura
           excluded_mailboxes = options[:excluded_mailboxes]
 
           imap_handler.all_mailbox_list.reject { |mailbox| excluded_mailboxes.include?(mailbox) }.each do |mailbox|
-            filter_mails(imap_handler, rules, mailbox, dry_run: dry_run)
+            filter_mails(imap_handler, rules, mailbox, search_keys, dry_run: dry_run)
           end
         else
-          filter_mails(imap_handler, rules, target_mailbox, dry_run: dry_run)
+          filter_mails(imap_handler, rules, target_mailbox, search_keys, dry_run: dry_run)
         end
       end
     end
