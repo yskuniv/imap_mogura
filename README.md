@@ -10,7 +10,7 @@ To install this gem, you can get it from RubyGems.org. Just run as following.
 $ gem install imap_mogura --pre
 ```
 
-(This gem has only released pre-release versions now, so you must specify `--pre` option)
+(This gem has only released pre-release versions now, so you must specify `--pre` option.)
 
 ## Usage
 
