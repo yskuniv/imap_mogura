@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Mogura
+module ImapMogura
   RuleSet = Struct.new(:destination, :raw_rule, :parsed_rule) do
     HASH_KEYS = %w[destination rule].freeze # rubocop:disable Lint/ConstantDefinitionInBlock
 

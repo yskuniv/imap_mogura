@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "mogura"
+require "imap_mogura"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

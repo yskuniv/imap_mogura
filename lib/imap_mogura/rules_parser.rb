@@ -7,7 +7,7 @@ require_relative "rules_parser/errors"
 require_relative "rules_parser/rule_set"
 require_relative "rules_parser/rule_elements"
 
-module Mogura
+module ImapMogura
   module RulesParser
     class << self
       def parse(rules)

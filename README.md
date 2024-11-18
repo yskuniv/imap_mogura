@@ -1,4 +1,4 @@
-# Mogura
+# ImapMogura
 
 A mail filtering tool for IMAP.
 
@@ -7,8 +7,8 @@ A mail filtering tool for IMAP.
 Check out this repository first and enter the directory.
 
 ```console
-$ git clone https://github.com/yskuniv/mogura.git
-$ cd mogura/
+$ git clone https://github.com/yskuniv/imap_mogura.git
+$ cd imap_mogura/
 ```
 
 Install this gem and add to the application's Gemfile by executing:
@@ -71,7 +71,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/yskuniv/mogura.
+Bug reports and pull requests are welcome on GitHub at https://github.com/yskuniv/imap_mogura.
 
 ## License
 

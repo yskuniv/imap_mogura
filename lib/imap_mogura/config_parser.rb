@@ -4,7 +4,7 @@ require "yaml"
 
 require_relative "config_parser/errors"
 
-module Mogura
+module ImapMogura
   module ConfigParser
     class << self
       def parse(config_name)
