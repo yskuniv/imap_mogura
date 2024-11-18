@@ -3,7 +3,7 @@
 require "mail"
 require "net/imap"
 
-module Mogura
+module ImapMogura
   class IMAPHandler
     class Error < StandardError; end
 

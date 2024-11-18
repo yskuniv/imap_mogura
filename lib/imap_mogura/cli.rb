@@ -3,7 +3,7 @@
 require "thor"
 require "base64"
 
-module Mogura
+module ImapMogura
   class CustomOptionError < Thor::Error
     def initialize(msg = "Custom option error message")
       super

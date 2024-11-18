@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in mogura.gemspec
+# Specify your gem's dependencies in imap_mogura.gemspec
 gemspec
 
 gem "rake", "~> 13.0"

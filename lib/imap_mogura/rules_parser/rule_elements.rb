@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Mogura
+module ImapMogura
   class RuleElement
     def match?(mail)
       raise NotImplementedError

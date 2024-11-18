@@ -1,24 +1,22 @@
 # frozen_string_literal: true
 
-require_relative "lib/mogura/version"
+require_relative "lib/imap_mogura/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "mogura"
-  spec.version = Mogura::VERSION
+  spec.name = "imap_mogura"
+  spec.version = ImapMogura::VERSION
   spec.authors = ["ysk"]
   spec.email = ["ysk.univ.1007@gmail.com"]
 
   spec.summary = "A mail filtering tool for IMAP."
   spec.description = "A mail filtering tool for IMAP."
-  spec.homepage = "https://github.com/yskuniv/mogura"
+  spec.homepage = "https://github.com/yskuniv/imap_mogura"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
 
-  # TODO: setup around here in the future
-  # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
-
-  # spec.metadata["homepage_uri"] = spec.homepage
-  # spec.metadata["source_code_uri"] = "TODO: Put your gem's public repo URL here."
+  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = "https://github.com/yskuniv/mogura"
+  # TODO: set in the feature
   # spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
 
   # Specify which files should be added to the gem when it is released.

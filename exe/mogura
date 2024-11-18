@@ -2,6 +2,6 @@
 
 # frozen_string_literal: true
 
-require "mogura"
+require "imap_mogura"
 
-Mogura::CLI.start(ARGV)
+ImapMogura::CLI.start(ARGV)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Mogura
+module ImapMogura
   module ConfigParser
     class Error < StandardError; end
     class ParseError < Error; end
