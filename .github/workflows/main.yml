@@ -46,7 +46,7 @@ jobs:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
     - name: Sign-in to RubyGems.org
-      run: gem signin --api-key ${{ secrets.API_KEY }}
+      run: GEM_HOST_API_KEY=${{ secrets.API_KEY }} gem signin
     - name: Build gem
       run: gem build imap_mogura.gemspec
     - name: Publish gem
