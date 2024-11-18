@@ -100,10 +100,10 @@ module Mogura
           excluded_mailboxes = options[:excluded_mailboxes]
 
           imap_handler.all_mailbox_list.reject { |mailbox| excluded_mailboxes.include?(mailbox) }.each do |mailbox|
-            filter_all_mails(imap_handler, rules, mailbox, dry_run: dry_run)
+            filter_mails(imap_handler, rules, mailbox, dry_run: dry_run)
           end
         else
-          filter_all_mails(imap_handler, rules, target_mailbox, dry_run: dry_run)
+          filter_mails(imap_handler, rules, target_mailbox, dry_run: dry_run)
         end
       end
     end
