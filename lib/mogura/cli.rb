@@ -26,7 +26,7 @@ module Mogura
     option :password_base64, type: :string
     option :config, type: :string, aliases: :c, required: true
     option :target_mailbox, type: :string, aliases: :b, required: true
-    option :filter_unseen, type: :bool, default: true
+    option :filter_unseen, type: :boolean, default: true
     option :create_directory, type: :boolean, default: true
     option :dry_run, type: :boolean, default: false
     def start(host)
@@ -72,7 +72,7 @@ module Mogura
     option :all_mailbox, type: :boolean, default: false, aliases: :a
     option :exclude_mailboxes, type: :array, default: []
     option :target_mailbox, type: :string, aliases: :b
-    option :filter_only_unseen, type: :bool, default: false
+    option :filter_only_unseen, type: :boolean, default: false
     option :create_directory, type: :boolean, default: true
     option :dry_run, type: :boolean, default: false
     def filter(host)
