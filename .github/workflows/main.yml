@@ -48,7 +48,13 @@ jobs:
         bundler-cache: true
     - name: Sign-in to RubyGems.org
       run: GEM_HOST_API_KEY=${{ secrets.API_KEY }} gem signin
+
     - name: Build gem
       run: gem build imap_mogura.gemspec
+
+    - name: Get tag name
+      id: get_tag_name
+      run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
+
     - name: Publish gem
-      run: GEM_HOST_API_KEY=${{ secrets.API_KEY }} gem push imap_mogura-${{ github.ref }}.gem
+      run: gem push imap_mogura-${{ steps.get_tag_name.outputs.TAG_NAME }}.gem
