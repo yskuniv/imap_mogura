@@ -4,7 +4,7 @@ A mail filtering tool for IMAP.
 
 ## Installation
 
-To install this gem, you can install it from RubyGems.org. Just run as following.
+To install this gem, you can get it from RubyGems.org. Just run as following.
 
 (This gem has only released pre-release versions now, so you must specify `--pre` option)
 
