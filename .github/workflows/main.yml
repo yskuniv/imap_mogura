@@ -51,4 +51,4 @@ jobs:
     - name: Build gem
       run: gem build imap_mogura.gemspec
     - name: Publish gem
-      run: gem push imap_mogura-${{ github.ref }}.gem
+      run: GEM_HOST_API_KEY=${{ secrets.API_KEY }} gem push imap_mogura-${{ github.ref }}.gem
