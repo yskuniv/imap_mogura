@@ -41,15 +41,13 @@ module Mogura
       @imap.disconnect
     end
 
-    def monitor_recents(mailbox, &block)
+    def monitor_events(mailbox, events, &block)
       loop do
-        wait_event_with_idle(mailbox, ["RECENT"])
+        resp = wait_event_with_idle(mailbox, events)
 
-        @imap.search(["RECENT"]).each do |message_id|
-          break unless block
+        break unless block
 
-          block[message_id]
-        end
+        block[resp]
       end
     end
 
@@ -57,7 +55,11 @@ module Mogura
       select_mailbox(mailbox)
 
       @imap.idle do |resp|
-        @imap.idle_done if expected_response_names.include? resp.name
+        if expected_response_names.include? resp.name
+          @imap.idle_done
+
+          return resp
+        end
       end
     end
 
@@ -66,9 +68,13 @@ module Mogura
     end
 
     def handle_all_mails(mailbox, &block)
+      find_and_handle_mails(mailbox, ["ALL"], &block)
+    end
+
+    def find_and_handle_mails(mailbox, search_keys, &block)
       select_mailbox(mailbox)
 
-      @imap.search(["ALL"]).each do |message_id|
+      @imap.search(search_keys).each do |message_id|
         break unless block
 
         block[message_id]
