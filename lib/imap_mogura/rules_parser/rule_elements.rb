@@ -35,7 +35,7 @@ module ImapMogura
 
   class FieldMatcher < RuleElement
     def initialize(regexp)
-      @regexp = /#{regexp}/ # FIXME: need to care about malicious regular expression injection
+      @regexp = Regexp.new(regexp)
 
       super()
     end
