@@ -158,7 +158,8 @@ module ImapMogura
                                auth_info: nil,
                                excluded_mailboxes: [],
                                create_directory: true,
-                               dry_run: false, &block)
+                               dry_run: false,
+                               &block)
       _, rules = load_and_handle_config(config_name)
 
       warn "* connecting the server #{host}:#{port}..."
