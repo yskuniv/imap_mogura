@@ -45,10 +45,10 @@ module ImapMogura
       monitored_events = ["RECENT"]
       search_keys = ["RECENT", *(["UNSEEN"] if filter_unseen)]
 
-      with_all_preparation_ready(config_name, host, port, starttls, use_ssl,
-                                 auth_info: { auth_type: auth_type, user: user, password: password },
-                                 create_directory: create_directory,
-                                 dry_run: dry_run) do |imap_handler, rules|
+      with_preparation_ready(config_name, host, port, starttls, use_ssl,
+                             auth_info: { auth_type: auth_type, user: user, password: password },
+                             create_directory: create_directory,
+                             dry_run: dry_run) do |imap_handler, rules|
         warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
         imap_handler.monitor_events(target_mailbox, monitored_events) do
@@ -99,11 +99,11 @@ module ImapMogura
                       ["ALL"]
                     end
 
-      with_all_preparation_ready(config_name, host, port, starttls, use_ssl,
-                                 auth_info: { auth_type: auth_type, user: user, password: password },
-                                 excluded_mailboxes: exclude_mailboxes,
-                                 create_directory: create_directory,
-                                 dry_run: dry_run) do |imap_handler, rules, options|
+      with_preparation_ready(config_name, host, port, starttls, use_ssl,
+                             auth_info: { auth_type: auth_type, user: user, password: password },
+                             excluded_mailboxes: exclude_mailboxes,
+                             create_directory: create_directory,
+                             dry_run: dry_run) do |imap_handler, rules, options|
         if all_mailbox
           excluded_mailboxes = options[:excluded_mailboxes]
 
@@ -152,13 +152,14 @@ module ImapMogura
 
     private
 
-    def with_all_preparation_ready(config_name,
-                                   host, port,
-                                   starttls, use_ssl, certs: nil, verify: true,
-                                   auth_info: nil,
-                                   excluded_mailboxes: [],
-                                   create_directory: true,
-                                   dry_run: false, &block)
+    def with_preparation_ready(config_name,
+                               host, port,
+                               starttls, use_ssl, certs: nil, verify: true,
+                               auth_info: nil,
+                               excluded_mailboxes: [],
+                               create_directory: true,
+                               dry_run: false,
+                               &block)
       _, rules = load_and_handle_config(config_name)
 
       warn "* connecting the server #{host}:#{port}..."
