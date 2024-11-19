@@ -64,6 +64,8 @@ module ImapMogura
         else
           GeneralFieldMatcher.new(k, rule[k])
         end
+      rescue RegexpError
+        raise ParseError, "illegal regular expression: #{rule[k].inspect}"
       end
 
       def parse_rule_list(rule_list)
