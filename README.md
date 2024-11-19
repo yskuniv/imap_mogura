@@ -1,24 +1,64 @@
-# Mogura
+# ImapMogura
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/mogura`. To experiment with that code, run `bin/console` for an interactive prompt.
+A mail filtering tool for IMAP.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+To install this gem, you can get it from RubyGems.org. Just run as following.
 
-Install the gem and add to the application's Gemfile by executing:
+```console
+$ gem install imap_mogura --pre
+```
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+(This gem has only released pre-release versions now, so you must specify `--pre` option.)
 
 ## Usage
 
-TODO: Write usage instructions here
+Create `rules.yml` and write rules like following.
+
+```yaml
+rules:
+  - destination: test
+    rule:
+      and:
+        - subject: "^\\[TEST "
+        - or:
+          - sender: "test@example\\.com"
+          - x-test: "X-TEST"
+
+  - destination: bar
+    rule:
+      from: "no-reply@bar\\.example\\.com"
+
+  - destination: Trash
+    rule:
+      subject: "i'm trash-like email!!"
+```
+
+As following, `start` command will start monitoring RECENT mails on "INBOX". If a mail is coming
+ and it's RECENT, it will be filtered.
+
+```console
+$ mogura start <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
+```
+
+You can specify a mailbox which to be monitored by `-b` option.
+
+If you want to just filter mails on a specific mailbox, run the `filter` command as following.
+
+```console
+$ mogura filter <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b <mailbox>
+```
+
+You can check your config by `check-config` command. It returns just OK if no errors in the config.
+
+```console
+$ mogura check-config -c rules.yml
+OK
+$ 
+```
+
+About more features, see `--help`.
 
 ## Development
 
@@ -28,7 +68,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/mogura.
+Bug reports and pull requests are welcome on GitHub at https://github.com/yskuniv/imap_mogura.
 
 ## License
 
