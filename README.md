@@ -41,7 +41,7 @@ Running `mogura start` command will start monitoring RECENT mails coming to "INB
 $ mogura start <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
 ```
 
-You can specify the mailbox to be monitored by `-b` option.
+You can specify the mailbox by `-b` option.
 
 If you want to just filter mails on the specific mailbox, use `mogura filter` command.
 
