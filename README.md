@@ -47,7 +47,7 @@ If you want to just filter mails on the specific mailbox, use `mogura filter` co
 $ mogura filter <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b <mailbox>
 ```
 
-You can check your config by `check-config` command. It returns just OK if no errors in the config.
+You can check your config by `mogura check-config` command. It returns just OK if no errors in the config.
 
 ```console
 $ mogura check-config -c rules.yml
