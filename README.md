@@ -41,7 +41,7 @@ rules:
 $ mogura start <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
 ```
 
-You can specify a mailbox which to be monitored by `-b` option.
+You can specify a mailbox to be monitored by `-b` option.
 
 If you want to just filter mails on a specific mailbox, run the `filter` command as following.
 
