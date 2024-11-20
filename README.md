@@ -4,7 +4,7 @@ A mail filtering tool for IMAP.
 
 ## Installation
 
-To install this gem, you can get it from RubyGems.org. Just run as following.
+To install this gem, just run as following. You can get the gem from [RubyGems.org](https://rubygems.org/).
 
 ```console
 $ gem install imap_mogura --pre
@@ -35,22 +35,21 @@ rules:
       subject: "i'm trash-like email!!"
 ```
 
-As following, `start` command will start monitoring RECENT mails on "INBOX". If a mail is coming
- and it's RECENT, it will be filtered.
+Running `mogura start` command will start monitoring RECENT mails coming to "INBOX". If a mail with RECENT flag is coming to the mailbox, it will be filtered.
 
 ```console
 $ mogura start <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
 ```
 
-You can specify a mailbox which to be monitored by `-b` option.
+You can specify the mailbox by `-b` option.
 
-If you want to just filter mails on a specific mailbox, run the `filter` command as following.
+If you want to just filter mails on the specific mailbox, use `mogura filter` command.
 
 ```console
 $ mogura filter <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b <mailbox>
 ```
 
-You can check your config by `check-config` command. It returns just OK if no errors in the config.
+You can check your config by `mogura check-config` command. It returns just OK if no errors in the config.
 
 ```console
 $ mogura check-config -c rules.yml
