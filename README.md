@@ -33,8 +33,7 @@ rules:
       subject: "i'm trash-like email!!"
 ```
 
-As following, `start` command will start monitoring RECENT mails on "INBOX". If a mail is coming
- and it's RECENT, it will be filtered.
+`mogura start` command will start monitoring RECENT mails coming to "INBOX". If a mail with RECENT flag is coming, it will be filtered.
 
 ```console
 $ mogura start <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b INBOX
