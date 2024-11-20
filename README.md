@@ -43,7 +43,7 @@ $ mogura start <host> -u <user> --password-base64=<password-base64-encoded> -c r
 
 You can specify a mailbox to be monitored by `-b` option.
 
-If you want to just filter mails on a specific mailbox, run the `filter` command as following.
+If you want to just filter mails on the specific mailbox, use `mogura filter` command.
 
 ```console
 $ mogura filter <host> -u <user> --password-base64=<password-base64-encoded> -c rules.yml -b <mailbox>
