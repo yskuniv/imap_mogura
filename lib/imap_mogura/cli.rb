@@ -137,6 +137,7 @@ module ImapMogura
                                      starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
                                      auth_info: { auth_type: auth_type, user: user, password: password })
 
+      # output all mailbox list
       puts imap_handler.all_mailbox_list
 
       imap_handler.close
@@ -176,10 +177,12 @@ module ImapMogura
       #   exit
       # end
 
+      # create directories specified as destination
       touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: dry_run) if create_directory
 
       options = { excluded_mailboxes: excluded_mailboxes }
 
+      # call the given block
       block[imap_handler, rules, options]
 
       imap_handler.close
