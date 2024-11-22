@@ -86,12 +86,11 @@ module ImapMogura
       all_mailbox = options[:all_mailbox]
       exclude_mailboxes = options[:exclude_mailboxes]
       target_mailbox = options[:target_mailbox] unless all_mailbox
-
-      raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
-
       filter_only_unseen = options[:filter_only_unseen]
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
+
+      raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
 
       search_keys = if filter_only_unseen
                       ["UNSEEN"]
