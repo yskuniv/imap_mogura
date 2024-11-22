@@ -242,7 +242,6 @@ module ImapMogura
 
       warn "wait a moment..."
 
-      # wait a moment...
       sleep 10
     end
 
