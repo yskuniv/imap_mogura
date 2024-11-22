@@ -213,7 +213,7 @@ module ImapMogura
 
       warn "retry monitoring mails on #{e.mailbox}..."
 
-      # retry monitor recents on mailbox itself
+      # retry monitor recents on mailbox itself with retry count to be incremented
       monitor_recents_on_mailbox(imap_handler, mailbox, retry_count + 1)
     end
 
@@ -226,7 +226,7 @@ module ImapMogura
 
       warn "retry filter all mails on #{e.mailbox}"
 
-      # retry filter all mails itself
+      # retry filter all mails itself with retry count to be incremented
       filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
     end
 
