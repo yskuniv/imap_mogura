@@ -209,23 +209,11 @@ module ImapMogura
     def monitor_recents_on_mailbox(imap_handler, mailbox, retry_count = 0, &block)
       imap_handler.monitor_events(mailbox, ["RECENT"], &block)
     rescue IMAPHandler::MailFetchError => e
-      warn "failed to fetch mail (id = #{e.message_id} on mailbox #{e.mailbox}): #{e.bad_response_error_message}"
-
-      # if retry_count is over the threshold, terminate processing
-      unless retry_count < 3
-        warn "retry count is over the threshold, stop processing"
-
-        return
-      end
-
-      warn "wait a moment..."
-
-      # wait a moment...
-      sleep 10
+      handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
       warn "retry monitoring mails on #{e.mailbox}..."
 
-      # retry monitor recents on mailbox itself
+      # retry monitor recents on mailbox itself with retry count to be incremented
       monitor_recents_on_mailbox(imap_handler, mailbox, retry_count + 1)
     end
 
@@ -234,24 +222,24 @@ module ImapMogura
         filter_mail(imap_handler, rules, mailbox, message_id, dry_run: dry_run)
       end
     rescue IMAPHandler::MailFetchError => e
-      warn "failed to fetch mail (id = #{e.message_id} on mailbox #{e.mailbox}): #{e.bad_response_error_message}"
+      handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
-      # if retry_count is over the threshold, terminate processing
-      unless retry_count < 3
-        warn "retry count is over the threshold, stop processing"
+      warn "retry filtering all mails on #{e.mailbox}"
 
-        return
-      end
+      # retry filter all mails itself with retry count to be incremented
+      filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
+    end
+
+    def handle_mail_fetch_error_and_preprocess_retrying(error, retry_count)
+      warn "failed to fetch mail (id = #{error.message_id} on mailbox #{error.mailbox}): #{error.bad_response_error_message}"
+
+      # if retry_count is over the threshold, abort processing
+      raise Thor::Error, "retry count is over the threshold, stop processing" unless retry_count < 3
 
       warn "wait a moment..."
 
       # wait a moment...
       sleep 10
-
-      warn "retry filter all mails on #{e.mailbox}"
-
-      # retry filter all mails itself
-      filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
     end
 
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
