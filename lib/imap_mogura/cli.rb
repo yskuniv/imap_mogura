@@ -106,7 +106,10 @@ module ImapMogura
         if all_mailbox
           excluded_mailboxes = options[:excluded_mailboxes]
 
-          imap_handler.all_mailbox_list.reject { |mailbox| excluded_mailboxes.include?(mailbox) }.each do |mailbox|
+          # figure out target mailboxes
+          target_mailboxes = imap_handler.all_mailbox_list.reject { |mailbox| excluded_mailboxes.include?(mailbox) }
+
+          target_mailboxes.each do |mailbox|
             filter_mails(imap_handler, rules, mailbox, search_keys, dry_run: dry_run)
           end
         else
