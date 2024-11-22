@@ -42,7 +42,6 @@ module ImapMogura
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
 
-      monitored_events = ["RECENT"]
       search_keys = ["RECENT", *(["UNSEEN"] if filter_unseen)]
 
       with_preparation_ready(config_name, host, port, starttls, use_ssl,
@@ -51,7 +50,7 @@ module ImapMogura
                              dry_run: dry_run) do |imap_handler, rules|
         warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
-        imap_handler.monitor_events(target_mailbox, monitored_events) do
+        monitor_recents_on_mailbox(imap_handler, target_mailbox) do
           imap_handler.find_and_handle_mails(target_mailbox, search_keys) do |message_id|
             warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
 
@@ -86,12 +85,11 @@ module ImapMogura
       all_mailbox = options[:all_mailbox]
       exclude_mailboxes = options[:exclude_mailboxes]
       target_mailbox = options[:target_mailbox] unless all_mailbox
-
-      raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
-
       filter_only_unseen = options[:filter_only_unseen]
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
+
+      raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
 
       search_keys = if filter_only_unseen
                       ["UNSEEN"]
@@ -208,29 +206,40 @@ module ImapMogura
       end
     end
 
+    def monitor_recents_on_mailbox(imap_handler, mailbox, retry_count = 0, &block)
+      imap_handler.monitor_events(mailbox, ["RECENT"], &block)
+    rescue IMAPHandler::MailFetchError => e
+      handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
+
+      warn "retry monitoring mails on #{e.mailbox}..."
+
+      # retry monitor recents on mailbox itself with retry count to be incremented
+      monitor_recents_on_mailbox(imap_handler, mailbox, retry_count + 1)
+    end
+
     def filter_mails(imap_handler, rules, mailbox, search_keys = ["ALL"], retry_count = 0, dry_run: false)
       imap_handler.find_and_handle_mails(mailbox, search_keys) do |message_id|
         filter_mail(imap_handler, rules, mailbox, message_id, dry_run: dry_run)
       end
     rescue IMAPHandler::MailFetchError => e
-      warn "failed to fetch mail (id = #{e.message_id} on mailbox #{e.mailbox}): #{e.bad_response_error_message}"
+      handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
-      # if retry_count is over the threshold, terminate processing
-      unless retry_count < 3
-        warn "retry count is over the threshold, stop processing"
+      warn "retry filtering all mails on #{e.mailbox}"
 
-        return
-      end
+      # retry filter all mails itself with retry count to be incremented
+      filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
+    end
+
+    def handle_mail_fetch_error_and_preprocess_retrying(error, retry_count)
+      warn "failed to fetch mail (id = #{error.message_id} on mailbox #{error.mailbox}): #{error.bad_response_error_message}"
+
+      # if retry_count is over the threshold, abort processing
+      raise Thor::Error, "retry count is over the threshold, stop processing" unless retry_count < 3
 
       warn "wait a moment..."
 
       # wait a moment...
       sleep 10
-
-      warn "retry filter all mails on #{e.mailbox}"
-
-      # retry filter all mails itself
-      filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
     end
 
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
