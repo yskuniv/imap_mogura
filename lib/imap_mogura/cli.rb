@@ -42,7 +42,6 @@ module ImapMogura
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
 
-      monitored_events = ["RECENT"]
       search_keys = ["RECENT", *(["UNSEEN"] if filter_unseen)]
 
       with_preparation_ready(config_name, host, port, starttls, use_ssl,
@@ -51,7 +50,7 @@ module ImapMogura
                              dry_run: dry_run) do |imap_handler, rules|
         warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
-        imap_handler.monitor_events(target_mailbox, monitored_events) do
+        monitor_recents_on_mailbox(imap_handler, target_mailbox) do
           imap_handler.find_and_handle_mails(target_mailbox, search_keys) do |message_id|
             warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
 
@@ -205,6 +204,29 @@ module ImapMogura
           warn "mailbox \"#{dst_mailbox}\" is created" if result
         end
       end
+    end
+
+    def monitor_recents_on_mailbox(imap_handler, mailbox, retry_count = 0, &block)
+      imap_handler.monitor_events(mailbox, ["RECENT"], &block)
+    rescue IMAPHandler::MailFetchError => e
+      warn "failed to fetch mail (id = #{e.message_id} on mailbox #{e.mailbox}): #{e.bad_response_error_message}"
+
+      # if retry_count is over the threshold, terminate processing
+      unless retry_count < 3
+        warn "retry count is over the threshold, stop processing"
+
+        return
+      end
+
+      warn "wait a moment..."
+
+      # wait a moment...
+      sleep 10
+
+      warn "retry monitoring mails on #{e.mailbox}..."
+
+      # retry monitor recents on mailbox itself
+      monitor_recents_on_mailbox(imap_handler, mailbox, retry_count + 1)
     end
 
     def filter_mails(imap_handler, rules, mailbox, search_keys = ["ALL"], retry_count = 0, dry_run: false)
