@@ -254,24 +254,7 @@ module ImapMogura
       warn "# filtering mail on \"#{mailbox}\" of subject \"#{mail.subject}\"..."
 
       rules.each do |rule_set|
-        dst_mailbox = rule_set.destination
-        rule = rule_set.rule
-
-        next unless rule.match?(mail)
-
-        warn "the mail matches for the rule of the destination \"#{dst_mailbox}\""
-        warn "moving the mail..."
-
-        if dry_run
-          warn "moving skipped because this is dry run"
-        else
-          result = imap_handler.move(mailbox, message_id, dst_mailbox)
-          if result
-            warn "moving done"
-          else
-            warn "moving skipped because the destination is the same with the current mailbox \"#{mailbox}\""
-          end
-        end
+        try_filtering_mail_for_rule_set(imap_handler, rule_set, mail, dry_run: dry_run)
       end
 
       imap_handler.close_operation_for_mailbox(mailbox)
