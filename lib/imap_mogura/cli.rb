@@ -207,9 +207,7 @@ module ImapMogura
     end
 
     def monitor_recents_on_mailbox(imap_handler, mailbox, retry_count = 0, &block)
-      imap_handler.monitor_events(mailbox, ["RECENT"]) do
-        block[]
-      end
+      imap_handler.monitor_events(mailbox, ["RECENT"], &block)
     rescue IMAPHandler::MailFetchError => e
       warn "failed to fetch mail (id = #{e.message_id} on mailbox #{e.mailbox}): #{e.bad_response_error_message}"
 
