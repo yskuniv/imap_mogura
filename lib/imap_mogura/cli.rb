@@ -224,7 +224,7 @@ module ImapMogura
     rescue IMAPHandler::MailFetchError => e
       handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
-      warn "retry filter all mails on #{e.mailbox}"
+      warn "retry filtering all mails on #{e.mailbox}"
 
       # retry filter all mails itself with retry count to be incremented
       filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
