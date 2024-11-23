@@ -51,6 +51,7 @@ module ImapMogura
         warn "* start monitoring recent mails in \"#{target_mailbox}\""
 
         monitor_recents_on_mailbox(imap_handler, target_mailbox) do
+          # find mails with search keys on the target mailbox and handle them
           imap_handler.find_and_handle_mails(target_mailbox, search_keys) do |message_id|
             warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
 
@@ -105,7 +106,10 @@ module ImapMogura
         if all_mailbox
           excluded_mailboxes = options[:excluded_mailboxes]
 
-          imap_handler.all_mailbox_list.reject { |mailbox| excluded_mailboxes.include?(mailbox) }.each do |mailbox|
+          # figure out target mailboxes
+          target_mailboxes = imap_handler.all_mailbox_list.reject { |mailbox| excluded_mailboxes.include?(mailbox) }
+
+          target_mailboxes.each do |mailbox|
             filter_mails(imap_handler, rules, mailbox, search_keys, dry_run: dry_run)
           end
         else
@@ -133,6 +137,7 @@ module ImapMogura
                                      starttls: starttls, usessl: use_ssl, certs: nil, verify: true,
                                      auth_info: { auth_type: auth_type, user: user, password: password })
 
+      # output all mailbox list
       puts imap_handler.all_mailbox_list
 
       imap_handler.close
@@ -172,10 +177,12 @@ module ImapMogura
       #   exit
       # end
 
+      # create directories specified as destination
       touch_all_mailboxes_in_rules(imap_handler, rules, dry_run: dry_run) if create_directory
 
       options = { excluded_mailboxes: excluded_mailboxes }
 
+      # call the given block
       block[imap_handler, rules, options]
 
       imap_handler.close
@@ -211,9 +218,9 @@ module ImapMogura
     rescue IMAPHandler::MailFetchError => e
       handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
+      # retry monitor recents on mailbox itself with retry count to be incremented
       warn "retry monitoring mails on #{e.mailbox}..."
 
-      # retry monitor recents on mailbox itself with retry count to be incremented
       monitor_recents_on_mailbox(imap_handler, mailbox, retry_count + 1)
     end
 
@@ -224,9 +231,9 @@ module ImapMogura
     rescue IMAPHandler::MailFetchError => e
       handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
+      # retry filter all mails itself with retry count to be incremented
       warn "retry filtering all mails on #{e.mailbox}"
 
-      # retry filter all mails itself with retry count to be incremented
       filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
     end
 
@@ -238,7 +245,6 @@ module ImapMogura
 
       warn "wait a moment..."
 
-      # wait a moment...
       sleep 10
     end
 
@@ -248,27 +254,31 @@ module ImapMogura
       warn "# filtering mail on \"#{mailbox}\" of subject \"#{mail.subject}\"..."
 
       rules.each do |rule_set|
-        dst_mailbox = rule_set.destination
-        rule = rule_set.rule
-
-        next unless rule.match?(mail)
-
-        warn "the mail matches for the rule of the destination \"#{dst_mailbox}\""
-        warn "moving the mail..."
-
-        if dry_run
-          warn "moving skipped because this is dry run"
-        else
-          result = imap_handler.move(mailbox, message_id, dst_mailbox)
-          if result
-            warn "moving done"
-          else
-            warn "moving skipped because the destination is the same with the current mailbox \"#{mailbox}\""
-          end
-        end
+        try_to_filter_mail_for_rule_set(imap_handler, rule_set, mail, dry_run: dry_run)
       end
 
       imap_handler.close_operation_for_mailbox(mailbox)
+    end
+
+    def try_to_filter_mail_for_rule_set(imap_handler, rule_set, mail, dry_run: false)
+      dst_mailbox = rule_set.destination
+      rule = rule_set.rule
+
+      return unless rule.match?(mail)
+
+      warn "the mail matches for the rule of the destination \"#{dst_mailbox}\""
+      warn "moving the mail..."
+
+      if dry_run
+        warn "moving skipped because this is dry run"
+      else
+        result = imap_handler.move(mailbox, message_id, dst_mailbox)
+        if result
+          warn "moving done"
+        else
+          warn "moving skipped because the destination is the same with the current mailbox \"#{mailbox}\""
+        end
+      end
     end
   end
 end
