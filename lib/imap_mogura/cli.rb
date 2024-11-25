@@ -53,9 +53,11 @@ module ImapMogura
         monitor_recents_on_mailbox(imap_handler, target_mailbox) do
           # find mails with search keys on the target mailbox and handle them
           imap_handler.find_and_handle_mails(target_mailbox, search_keys) do |message_id|
-            warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
+            warn "a mail is recent on \"#{target_mailbox}\""
 
             filter_mail(imap_handler, rules, target_mailbox, message_id, dry_run: dry_run)
+
+            imap_handler.close_operation_for_mailbox(target_mailbox)
           end
         end
       end
@@ -219,7 +221,7 @@ module ImapMogura
       handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
       # retry monitor recents on mailbox itself with retry count to be incremented
-      warn "retry monitoring mails on #{e.mailbox}..."
+      warn "retry monitoring mails on \"#{e.mailbox}\"..."
 
       monitor_recents_on_mailbox(imap_handler, mailbox, retry_count + 1)
     end
@@ -228,24 +230,15 @@ module ImapMogura
       imap_handler.find_and_handle_mails(mailbox, search_keys) do |message_id|
         filter_mail(imap_handler, rules, mailbox, message_id, dry_run: dry_run)
       end
+
+      imap_handler.close_operation_for_mailbox(mailbox)
     rescue IMAPHandler::MailFetchError => e
       handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
       # retry filter all mails itself with retry count to be incremented
-      warn "retry filtering all mails on #{e.mailbox}"
+      warn "retry filtering all mails on \"#{e.mailbox}\""
 
       filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
-    end
-
-    def handle_mail_fetch_error_and_preprocess_retrying(error, retry_count)
-      warn "failed to fetch mail (id = #{error.message_id} on mailbox #{error.mailbox}): #{error.bad_response_error_message}"
-
-      # if retry_count is over the threshold, abort processing
-      raise Thor::Error, "retry count is over the threshold, stop processing" unless retry_count < 3
-
-      warn "wait a moment..."
-
-      sleep 10
     end
 
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
@@ -256,8 +249,6 @@ module ImapMogura
       rules.each do |rule_set|
         try_to_filter_mail_for_rule_set(imap_handler, rule_set, mailbox, message_id, mail, dry_run: dry_run)
       end
-
-      imap_handler.close_operation_for_mailbox(mailbox)
     end
 
     def try_to_filter_mail_for_rule_set(imap_handler, rule_set, mailbox, message_id, mail, dry_run: false)
@@ -279,6 +270,17 @@ module ImapMogura
           warn "moving skipped because the destination is the same with the current mailbox \"#{mailbox}\""
         end
       end
+    end
+
+    def handle_mail_fetch_error_and_preprocess_retrying(error, retry_count)
+      warn "failed to fetch the mail on \"#{error.mailbox}\": #{error.bad_response_error_message}"
+
+      # if retry_count is over the threshold, abort processing
+      raise Thor::Error, "retry count is over the threshold, stop processing" unless retry_count < 3
+
+      warn "wait a moment..."
+
+      sleep 10
     end
   end
 end
