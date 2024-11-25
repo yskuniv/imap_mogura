@@ -219,7 +219,7 @@ module ImapMogura
       handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
       # retry monitor recents on mailbox itself with retry count to be incremented
-      warn "retry monitoring mails on #{e.mailbox}..."
+      warn "retry monitoring mails on \"#{e.mailbox}\"..."
 
       monitor_recents_on_mailbox(imap_handler, mailbox, retry_count + 1)
     end
@@ -234,7 +234,7 @@ module ImapMogura
       handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
       # retry filter all mails itself with retry count to be incremented
-      warn "retry filtering all mails on #{e.mailbox}"
+      warn "retry filtering all mails on \"#{e.mailbox}\""
 
       filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
     end
