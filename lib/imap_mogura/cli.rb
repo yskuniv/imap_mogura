@@ -254,7 +254,7 @@ module ImapMogura
       warn "# filtering mail on \"#{mailbox}\" of subject \"#{mail.subject}\"..."
 
       rules.each do |rule_set|
-        try_to_filter_mail_for_rule_set(imap_handler, rule_set, mail, dry_run: dry_run)
+        try_to_filter_mail_for_rule_set(imap_handler, rule_set, mailbox, message_id, mail, dry_run: dry_run)
       end
 
       imap_handler.close_operation_for_mailbox(mailbox)
