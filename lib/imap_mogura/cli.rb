@@ -56,6 +56,8 @@ module ImapMogura
             warn "a mail is recent on \"#{target_mailbox}\""
 
             filter_mail(imap_handler, rules, target_mailbox, message_id, dry_run: dry_run)
+
+            imap_handler.close_operation_for_mailbox(target_mailbox)
           end
         end
       end
