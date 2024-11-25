@@ -239,17 +239,6 @@ module ImapMogura
       filter_mails(imap_handler, rules, mailbox, search_keys, retry_count + 1, dry_run: dry_run)
     end
 
-    def handle_mail_fetch_error_and_preprocess_retrying(error, retry_count)
-      warn "failed to fetch mail (id = #{error.message_id} on mailbox #{error.mailbox}): #{error.bad_response_error_message}"
-
-      # if retry_count is over the threshold, abort processing
-      raise Thor::Error, "retry count is over the threshold, stop processing" unless retry_count < 3
-
-      warn "wait a moment..."
-
-      sleep 10
-    end
-
     def filter_mail(imap_handler, rules, mailbox, message_id, dry_run: false)
       mail = imap_handler.fetch_header(mailbox, message_id)
 
@@ -279,6 +268,17 @@ module ImapMogura
           warn "moving skipped because the destination is the same with the current mailbox \"#{mailbox}\""
         end
       end
+    end
+
+    def handle_mail_fetch_error_and_preprocess_retrying(error, retry_count)
+      warn "failed to fetch mail (id = #{error.message_id} on mailbox #{error.mailbox}): #{error.bad_response_error_message}"
+
+      # if retry_count is over the threshold, abort processing
+      raise Thor::Error, "retry count is over the threshold, stop processing" unless retry_count < 3
+
+      warn "wait a moment..."
+
+      sleep 10
     end
   end
 end
