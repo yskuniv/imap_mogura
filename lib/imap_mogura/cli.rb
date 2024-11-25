@@ -228,6 +228,8 @@ module ImapMogura
       imap_handler.find_and_handle_mails(mailbox, search_keys) do |message_id|
         filter_mail(imap_handler, rules, mailbox, message_id, dry_run: dry_run)
       end
+
+      imap_handler.close_operation_for_mailbox(mailbox)
     rescue IMAPHandler::MailFetchError => e
       handle_mail_fetch_error_and_preprocess_retrying(e, retry_count)
 
@@ -256,8 +258,6 @@ module ImapMogura
       rules.each do |rule_set|
         try_to_filter_mail_for_rule_set(imap_handler, rule_set, mailbox, message_id, mail, dry_run: dry_run)
       end
-
-      imap_handler.close_operation_for_mailbox(mailbox)
     end
 
     def try_to_filter_mail_for_rule_set(imap_handler, rule_set, mailbox, message_id, mail, dry_run: false)
