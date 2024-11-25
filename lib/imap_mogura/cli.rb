@@ -53,7 +53,7 @@ module ImapMogura
         monitor_recents_on_mailbox(imap_handler, target_mailbox) do
           # find mails with search keys on the target mailbox and handle them
           imap_handler.find_and_handle_mails(target_mailbox, search_keys) do |message_id|
-            warn "mail (id = #{message_id} on \"#{target_mailbox}\") is recent"
+            warn "a mail is recent on \"#{target_mailbox}\""
 
             filter_mail(imap_handler, rules, target_mailbox, message_id, dry_run: dry_run)
           end
