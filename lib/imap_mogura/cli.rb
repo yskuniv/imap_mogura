@@ -260,7 +260,7 @@ module ImapMogura
       imap_handler.close_operation_for_mailbox(mailbox)
     end
 
-    def try_to_filter_mail_for_rule_set(imap_handler, rule_set, mail, dry_run: false)
+    def try_to_filter_mail_for_rule_set(imap_handler, rule_set, mailbox, message_id, mail, dry_run: false)
       dst_mailbox = rule_set.destination
       rule = rule_set.rule
 
