@@ -247,7 +247,7 @@ module ImapMogura
       warn "# filtering mail on \"#{mailbox}\" of subject \"#{mail.subject}\"..."
 
       rules.each do |rule_set|
-        try_to_filter_mail_for_rule_set(imap_handler, rule_set, mailbox, message_id, mail, dry_run: dry_run)
+        break if try_to_filter_mail_for_rule_set(imap_handler, rule_set, mailbox, message_id, mail, dry_run: dry_run)
       end
     end
 
@@ -255,7 +255,7 @@ module ImapMogura
       dst_mailbox = rule_set.destination
       rule = rule_set.rule
 
-      return unless rule.match?(mail)
+      return nil unless rule.match?(mail)
 
       warn "the mail matches for the rule of the destination \"#{dst_mailbox}\""
       warn "moving the mail..."
@@ -270,6 +270,8 @@ module ImapMogura
           warn "moving skipped because the destination is the same with the current mailbox \"#{mailbox}\""
         end
       end
+
+      dst_mailbox
     end
 
     def handle_mail_fetch_error_and_preprocess_retrying(error, retry_count)
