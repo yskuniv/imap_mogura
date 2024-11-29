@@ -255,7 +255,7 @@ module ImapMogura
       dst_mailbox = rule_set.destination
       rule = rule_set.rule
 
-      return unless rule.match?(mail)
+      return nil unless rule.match?(mail)
 
       warn "the mail matches for the rule of the destination \"#{dst_mailbox}\""
       warn "moving the mail..."
@@ -270,6 +270,8 @@ module ImapMogura
           warn "moving skipped because the destination is the same with the current mailbox \"#{mailbox}\""
         end
       end
+
+      dst_mailbox
     end
 
     def handle_mail_fetch_error_and_preprocess_retrying(error, retry_count)
