@@ -3,6 +3,8 @@
 require "thor"
 require "base64"
 
+require_relative "debug_util"
+
 module ImapMogura
   class CustomOptionError < Thor::Error
     def initialize(msg = "Custom option error message")
@@ -29,6 +31,7 @@ module ImapMogura
     option :filter_unseen, type: :boolean, default: true
     option :create_directory, type: :boolean, default: true
     option :dry_run, type: :boolean, default: false
+    option :debug, type: :boolean, default: false
     def start(host)
       port = options[:port]
       starttls = options[:starttls]
@@ -41,6 +44,9 @@ module ImapMogura
       filter_unseen = options[:filter_unseen]
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
+      debug = options[:debug]
+
+      DebugUtil.enable_debug if debug
 
       search_keys = ["RECENT", *(["UNSEEN"] if filter_unseen)]
 
@@ -77,6 +83,7 @@ module ImapMogura
     option :filter_only_unseen, type: :boolean, default: false
     option :create_directory, type: :boolean, default: true
     option :dry_run, type: :boolean, default: false
+    option :debug, type: :boolean, default: false
     def filter(host)
       port = options[:port]
       starttls = options[:starttls]
@@ -91,8 +98,11 @@ module ImapMogura
       filter_only_unseen = options[:filter_only_unseen]
       create_directory = options[:create_directory]
       dry_run = options[:dry_run]
+      debug = options[:debug]
 
       raise CustomOptionError, "--all-mailbox (-a) or --target-mailbox (-b) is required" if !all_mailbox && target_mailbox.nil?
+
+      DebugUtil.enable_debug if debug
 
       search_keys = if filter_only_unseen
                       ["UNSEEN"]
