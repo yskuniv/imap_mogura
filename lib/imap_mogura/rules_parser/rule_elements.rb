@@ -39,13 +39,15 @@ module ImapMogura
 
   class AndOperator < LogicalOperator
     def match?(mail)
-      @operands.all? { |elm| elm.match?(mail) }
+      debug_out_before_trying_rule("All of the operands match the rule")
+      debug_out_if_it_matches_rule(@operands.all? { |elm| elm.match?(mail) })
     end
   end
 
   class OrOperator < LogicalOperator
     def match?(mail)
-      @operands.any? { |elm| elm.match?(mail) }
+      debug_out_before_trying_rule("Any of the operands matches the rule")
+      debug_out_if_it_matches_rule(@operands.any? { |elm| elm.match?(mail) })
     end
   end
 
